@@ -61,7 +61,7 @@ void QuadWorld::run()
 				sf::Vector2i coordsTarget = m_grid.getGridCoords(m_grid[m_player.getTarget()].getPosition());
 				sf::Vector2i coordsPlayer = m_grid.getGridCoords(m_player.getPosition());
 				std::cout << "Target: " << coordsTarget.x << "|"  << coordsTarget.y 
-						<< " - Player: " << coordsPlayer.x << "|" << coordsPlayer.y << " = " << QuadGrid::hexDistance(coordsTarget, coordsPlayer) << std::endl;
+						<< " - Player: " << coordsPlayer.x << "|" << coordsPlayer.y << " = " << QuadGrid::quadDistance(coordsTarget, coordsPlayer) << std::endl;
 				//std::cout << mousePos_mapped.x << "," << mousePos_mapped.y << std::endl;
 				break;
 			}

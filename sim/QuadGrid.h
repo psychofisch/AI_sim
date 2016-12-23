@@ -45,10 +45,11 @@ public:
 	int getTerrain(int key);//TODO: make const
 
 	//statics
-	static sf::Vector3i hexToCube(sf::Vector2i hex);
+	static int quadDistance(sf::Vector2i a, sf::Vector2i b);
+	/*static sf::Vector3i hexToCube(sf::Vector2i hex);
 	static sf::Vector2i cubeToHex(sf::Vector3i cube);
 	static int hexDistance(sf::Vector2i a, sf::Vector2i b);
-	static sf::Vector2i rotate(sf::Vector2i a, sf::Vector2i b, int t);
+	static sf::Vector2i rotate(sf::Vector2i a, sf::Vector2i b, int t);*/
 
 private:
 	sf::Vector2i m_dimension;

@@ -24,7 +24,7 @@ protected:
 	bool m_player;
 	std::vector<Astar::Node> m_path;
 	int m_pathPos;
-	QuadGrid* m_hexgrid;
+	QuadGrid* m_quadgrid;
 	bool m_alive;
 	float	m_health,
 		m_thirst,

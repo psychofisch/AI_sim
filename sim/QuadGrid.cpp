@@ -97,11 +97,17 @@ int QuadGrid::getTerrain(int key)
 	return m_terrains[key];//operator[] const?
 }
 
+int QuadGrid::quadDistance(sf::Vector2i a, sf::Vector2i b)
+{
+	return std::abs(a.x - b.x) + std::abs(a.y - b.y);
+}
+
 Terrain& QuadGrid::operator[](int i)
 {
 	return m_grid[i];
 }
 
+/*
 sf::Vector3i QuadGrid::hexToCube(sf::Vector2i hex)
 {
 	sf::Vector3i cube;
@@ -126,6 +132,7 @@ int QuadGrid::hexDistance(sf::Vector2i a, sf::Vector2i b)
 	return (fabsf(cubeA.x - cubeB.x) + fabsf(cubeA.y - cubeB.y) + fabsf(cubeA.z - cubeB.z)) / 2.f;
 }
 
+
 sf::Vector2i QuadGrid::rotate(sf::Vector2i a, sf::Vector2i b, int t)
 {
 	sf::Vector3i cube = hexToCube(b - a);
@@ -138,3 +145,4 @@ sf::Vector2i QuadGrid::rotate(sf::Vector2i a, sf::Vector2i b, int t)
 	sf::Vector2i c = cubeToHex(cube);
 	return c;
 }
+*/
