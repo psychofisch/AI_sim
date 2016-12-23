@@ -1,7 +1,7 @@
 #pragma once
 #include "gameobj.h"
 #include "Astar.h"
-#include "HexGrid.h"
+#include "QuadGrid.h"
 
 class Agent : public gameobj
 {
@@ -16,7 +16,7 @@ public:
 
 	virtual void update(float dt);
 	bool setTarget(int t);
-	void setGrid(HexGrid* hg);
+	void setGrid(QuadGrid* hg);
 	void isPlayer(bool p);
 	
 protected:
@@ -24,7 +24,12 @@ protected:
 	bool m_player;
 	std::vector<Astar::Node> m_path;
 	int m_pathPos;
-	HexGrid* m_hexgrid;
+	QuadGrid* m_hexgrid;
+	bool m_alive;
+	float	m_health,
+		m_thirst,
+		m_hunger,
+		m_fatique;
 };
 
 class Enemy : public Agent

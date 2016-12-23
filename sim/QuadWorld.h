@@ -1,16 +1,16 @@
 #pragma once
 
 #include "FileIO.h"
-#include "Hexagon.h"
+#include "Block.h"
 #include "vector2math.h"
 #include "Agent.h"
-#include "HexGrid.h"
+#include "QuadGrid.h"
 
-class HexWorld
+class QuadWorld
 {
 public:
-	HexWorld();
-	~HexWorld();
+	QuadWorld();
+	~QuadWorld();
 
 	void run();
 	void loadLevel(const char* path);
@@ -26,9 +26,9 @@ public:
 private:
 	Agent m_player;
 	std::vector<Enemy> m_enemies;
-	Hexagon m_currentTile;
-	Hexagon m_threatTile;
-	HexGrid m_grid;
+	Block m_currentTile;
+	Block m_threatTile;
+	QuadGrid m_grid;
 	std::vector<sf::Texture*> m_texture;
 	sf::RenderWindow* m_window;
 	sf::View m_view;

@@ -3,7 +3,7 @@
 #include <SFML\Graphics.hpp>
 
 #include "FileIO.h"
-#include "HexWorld.h"
+#include "QuadWorld.h"
 
 void main(int argc, const char* argv[])
 {
@@ -39,7 +39,7 @@ void main(int argc, const char* argv[])
 	window.setVerticalSyncEnabled(false);
 	window.setFramerateLimit(60);
 
-	HexWorld hw;
+	QuadWorld hw;
 	hw.tick = tick;
 	hw.stepMode = true;
 	hw.setRenderWindow(&window);

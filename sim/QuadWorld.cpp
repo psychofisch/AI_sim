@@ -1,8 +1,8 @@
-#include "HexWorld.h"
+#include "QuadWorld.h"
 
 
 
-HexWorld::HexWorld()
+QuadWorld::QuadWorld()
 	:tick(2.f),
 	m_step(true),
 	stepMode(false)
@@ -11,11 +11,11 @@ HexWorld::HexWorld()
 }
 
 
-HexWorld::~HexWorld()
+QuadWorld::~QuadWorld()
 {
 }
 
-void HexWorld::run()
+void QuadWorld::run()
 {
 	int mouseMoveRectSize = 400;
 	sf::IntRect mouseMoveRect = sf::IntRect((m_window->getSize().x - mouseMoveRectSize) / 2, (m_window->getSize().x - mouseMoveRectSize) / 2, mouseMoveRectSize, mouseMoveRectSize);
@@ -30,24 +30,6 @@ void HexWorld::run()
 	m_threatTile.setFillColor(sf::Color::Red);
 
 	m_player.setGrid(&m_grid);
-
-	Enemy enemy;
-	enemy.setTexture(m_texture, 2);
-	int hexOffsetY = 0.07f * m_texture[1]->getSize().y;
-	enemy.setTextureRect(sf::IntRect(0, hexOffsetY, m_texture[1]->getSize().x, m_texture[1]->getSize().y - 2 * hexOffsetY));
-	enemy.setGrid(&m_grid);
-	enemy.isPlayer(false);
-
-	enemy.setPosition(m_grid[3 + 8 * m_grid.dimensions().y].getPosition());
-	enemy.addWaypoint(m_grid.getGridCoords(2 + 3 * m_grid.dimensions().y));
-	enemy.addWaypoint(m_grid.getGridCoords(11 + 3 * m_grid.dimensions().y));
-	m_enemies.push_back(enemy);
-
-	enemy.setPosition(m_grid[24].getPosition());
-	enemy.clearWaypoints();
-	enemy.addWaypoint(m_grid.getGridCoords(24));
-	enemy.addWaypoint(m_grid.getGridCoords(22 + 8 * m_grid.dimensions().y));
-	m_enemies.push_back(enemy);
 
 	bool quit = false;
 	while (!quit)
@@ -79,7 +61,7 @@ void HexWorld::run()
 				sf::Vector2i coordsTarget = m_grid.getGridCoords(m_grid[m_player.getTarget()].getPosition());
 				sf::Vector2i coordsPlayer = m_grid.getGridCoords(m_player.getPosition());
 				std::cout << "Target: " << coordsTarget.x << "|"  << coordsTarget.y 
-						<< " - Player: " << coordsPlayer.x << "|" << coordsPlayer.y << " = " << HexGrid::hexDistance(coordsTarget, coordsPlayer) << std::endl;
+						<< " - Player: " << coordsPlayer.x << "|" << coordsPlayer.y << " = " << QuadGrid::hexDistance(coordsTarget, coordsPlayer) << std::endl;
 				//std::cout << mousePos_mapped.x << "," << mousePos_mapped.y << std::endl;
 				break;
 			}
@@ -199,26 +181,26 @@ void HexWorld::run()
 	}
 }
 
-void HexWorld::loadLevel(const char* path)
+void QuadWorld::loadLevel(const char* path)
 {
 	FileIO::LoadLevel(path, m_grid, m_texture);
 
 	i_init();
 }
 
-void HexWorld::loadLevel(const char * gridpath, const char * texpath)
+void QuadWorld::loadLevel(const char * gridpath, const char * texpath)
 {
 	FileIO::LoadLevel(gridpath, texpath, m_grid, m_texture);
 
 	i_init();
 }
 
-void HexWorld::setRenderWindow(sf::RenderWindow * wndw)
+void QuadWorld::setRenderWindow(sf::RenderWindow * wndw)
 {
 	m_window = wndw;
 }
 
-void HexWorld::i_init()
+void QuadWorld::i_init()
 {
 	sf::Vector2f view_center((m_grid[0].getPosition() + m_grid[m_grid.size() - 1].getPosition()) / 2.0f);
 	m_view.setCenter(view_center);

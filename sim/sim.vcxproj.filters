@@ -27,19 +27,19 @@
     <ClCompile Include="gameobj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hexagon.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HexGrid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HexWorld.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vector2math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QuadGrid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QuadWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,16 +56,16 @@
     <ClInclude Include="gameobj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Hexagon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HexGrid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HexWorld.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="vector2math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadWorld.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -9,7 +9,7 @@ FileIO::~FileIO()
 {
 }
 
-sf::Vector2i FileIO::LoadLevel(const char* path, HexGrid& grid, std::vector<sf::Texture*>& textures, bool debug)
+sf::Vector2i FileIO::LoadLevel(const char* path, QuadGrid& grid, std::vector<sf::Texture*>& textures, bool debug)
 {
 	sf::Vector2i size(0, 0);
 
@@ -81,12 +81,9 @@ sf::Vector2i FileIO::LoadLevel(const char* path, HexGrid& grid, std::vector<sf::
 				}
 
 				tmp_obj.setTexture(textures, tmp[i] - '0');
-				sf::Vector2f size_fac = tmp_obj.getSizeFactors();
 
-				if(grid.size() % 2 == 0)
-					tmp_obj.setPosition(sf::Vector2f(i * tmp_obj.getRadius() * 0.75, row * size_fac.y));
-				else
-					tmp_obj.setPosition(sf::Vector2f(i * tmp_obj.getRadius() * 0.75f, row * size_fac.y - (0.866f * tmp_obj.getRadius())));
+				float size_fac = tmp_obj.getSize();
+				tmp_obj.setPosition(sf::Vector2f(i * size_fac, row * size_fac));
 
 				grid.push_back(tmp_obj);
 			}
@@ -104,7 +101,7 @@ sf::Vector2i FileIO::LoadLevel(const char* path, HexGrid& grid, std::vector<sf::
 
 	return size;
 }
-sf::Vector2i FileIO::LoadLevel(const char * gridpath, const char* texpath, HexGrid& grid, std::vector<sf::Texture*>& textures, bool debug)
+sf::Vector2i FileIO::LoadLevel(const char * gridpath, const char* texpath, QuadGrid& grid, std::vector<sf::Texture*>& textures, bool debug)
 {
 	//load Textures
 	std::ifstream file;
@@ -173,27 +170,23 @@ sf::Vector2i FileIO::LoadLevel(const char * gridpath, const char* texpath, HexGr
 	for(int y = 0; y < size.y; ++y)
 		for (int x = 0; x < size.x; ++x)
 		{
-			int texId = lvl.getPixel(x, y).r/10;
-			texId += 2;
+			int texId = lvl.getPixel(x, y).r/10 - 1;
+			texId += texOffset;
 			if (textures.size() > texId)
 			{
 				tmp_obj.setFillColor(sf::Color::White);
 				tmp_obj.setTexture(textures, texId);
-
-				int hexOffsetY = 0.07f * textures[texId]->getSize().y;
-				tmp_obj.setTextureRect(sf::IntRect(0, hexOffsetY, textures[texId]->getSize().x, textures[texId]->getSize().y - 2 * hexOffsetY));
+				tmp_obj.terrainId = texId;
 			}
 			else
 			{
 				tmp_obj.setFillColor(sf::Color::Magenta);
 				tmp_obj.setTexture(textures, -1);
+				tmp_obj.terrainId = 1;
 			}
-			sf::Vector2f size_fac = tmp_obj.getSizeFactors();
+			float size_fac = tmp_obj.getSize();
 
-			if (grid.size() % 2 == 0)
-				tmp_obj.setPosition(sf::Vector2f(x * tmp_obj.getRadius() * 1.5f, y * size_fac.y));
-			else
-				tmp_obj.setPosition(sf::Vector2f(x * tmp_obj.getRadius() * 1.5f, y * size_fac.y - (0.866f * tmp_obj.getRadius())));
+			tmp_obj.setPosition(sf::Vector2f(x * size_fac, y * size_fac));
 
 			grid.push_back(tmp_obj);
 		}

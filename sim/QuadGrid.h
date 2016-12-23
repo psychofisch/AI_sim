@@ -19,11 +19,11 @@ public:
 	int terrainId;
 };
 
-class HexGrid
+class QuadGrid
 {
 public:
-	HexGrid();
-	~HexGrid();
+	QuadGrid();
+	~QuadGrid();
 
 	std::vector<Terrain>& getGrid();
 	std::vector<float>& getThreatMap();

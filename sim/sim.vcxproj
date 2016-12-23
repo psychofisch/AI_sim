@@ -123,22 +123,22 @@
   <ItemGroup>
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="Astar.cpp" />
+    <ClCompile Include="Block.cpp" />
     <ClCompile Include="FileIO.cpp" />
     <ClCompile Include="gameobj.cpp" />
-    <ClCompile Include="Hexagon.cpp" />
-    <ClCompile Include="HexGrid.cpp" />
-    <ClCompile Include="HexWorld.cpp" />
+    <ClCompile Include="QuadGrid.cpp" />
+    <ClCompile Include="QuadWorld.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="vector2math.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
     <ClInclude Include="Astar.h" />
+    <ClInclude Include="Block.h" />
     <ClInclude Include="FileIO.h" />
     <ClInclude Include="gameobj.h" />
-    <ClInclude Include="Hexagon.h" />
-    <ClInclude Include="HexGrid.h" />
-    <ClInclude Include="HexWorld.h" />
+    <ClInclude Include="QuadGrid.h" />
+    <ClInclude Include="QuadWorld.h" />
     <ClInclude Include="vector2math.h" />
   </ItemGroup>
   <ItemGroup>

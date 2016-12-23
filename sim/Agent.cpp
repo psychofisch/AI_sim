@@ -1,11 +1,14 @@
 #include "Agent.h"
 
-
-
 Agent::Agent()
 	:m_targetTile(-1),
 	m_pathPos(0),
-	m_player(false)
+	m_player(false),
+	m_alive(true),
+	m_health(100.f),
+	m_thirst(25.f),
+	m_hunger(25.f),
+	m_fatique(25.f)
 {
 }
 
@@ -34,7 +37,7 @@ bool Agent::isPlayer() const
 
 void Agent::drawPath(sf::RenderWindow * wndw)
 {
-	Hexagon h;
+	Block h;
 	h.setFillColor(sf::Color(0,128,255,64));
 
 	for (int i = 0; i < m_path.size(); ++i)
@@ -75,7 +78,7 @@ bool Agent::setTarget(int t)
 	return true;
 }
 
-void Agent::setGrid(HexGrid * hg)
+void Agent::setGrid(QuadGrid * hg)
 {
 	m_hexgrid = hg;
 }

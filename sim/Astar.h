@@ -3,7 +3,7 @@
 #include <iostream>
 #include <SFML\Graphics.hpp>
 
-#include "HexGrid.h"
+#include "QuadGrid.h"
 
 inline sf::Vector2i operator-(sf::Vector2i lhs, const int& rhs)
 {
@@ -47,9 +47,9 @@ public:
 	Astar();
 	~Astar();
 
-	static std::vector<Node> findPath(HexGrid& grid, const sf::Vector2i& start, const sf::Vector2i& end, bool player);
+	static std::vector<Node> findPath(QuadGrid& grid, const sf::Vector2i& start, const sf::Vector2i& end, bool player);
 
 private:
-	bool i_nextStep(HexGrid& grid);
+	bool i_nextStep(QuadGrid& grid);
 };
 

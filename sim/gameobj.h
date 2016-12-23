@@ -1,8 +1,8 @@
 #pragma once
 #include <SFML\Graphics.hpp>
-#include "Hexagon.h"
+#include "Block.h"
 
-class gameobj : public Hexagon{
+class gameobj : public Block{
 public:
 	void setTexture(const std::vector<sf::Texture*>& t, int textureId);
 	bool isActive();

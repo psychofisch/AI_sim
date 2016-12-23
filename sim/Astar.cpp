@@ -1,7 +1,5 @@
 #include "Astar.h"
 
-
-
 Astar::Astar()
 {
 }
@@ -11,7 +9,7 @@ Astar::~Astar()
 {
 }
 
-std::vector<Astar::Node> Astar::findPath(HexGrid & grid, const sf::Vector2i & start, const sf::Vector2i & end, bool player)
+std::vector<Astar::Node> Astar::findPath(QuadGrid & grid, const sf::Vector2i & start, const sf::Vector2i & end, bool player)
 {
 	std::vector<Node> nodes;
 
@@ -32,18 +30,18 @@ std::vector<Astar::Node> Astar::findPath(HexGrid & grid, const sf::Vector2i & st
 			if (tmp < sf::Vector2i(0, 0) || tmp > grid.dimensions() - 1)
 				continue;
 
-			int terrain = grid.getTerrain(grid[tmp.x + tmp.y * grid.dimensions().y].getTextureId());
+			int terrain = grid.getTerrain(grid[tmp.x + tmp.y * grid.dimensions().y].terrainId);
 			if (terrain == 0)
 				continue;
 
 			tmp.todo = true;
-			tmp.costs = HexGrid::hexDistance(start, tmp) + terrain;
+			tmp.costs = QuadGrid::hexDistance(start, tmp) + terrain;
 			if (player)
 				tmp.costs += static_cast<int>(roundf(grid.getThreatMap()[tmp.x + tmp.y * grid.dimensions().y] * 10.f));
 			tmp.prev = currentNode;
 
 			int prevCosts = 0;
-			prevCosts = currentNode.costs - HexGrid::hexDistance(start, currentNode);
+			prevCosts = currentNode.costs - QuadGrid::hexDistance(start, currentNode);
 			tmp.costs += prevCosts;
 
 			bool existing = false;
