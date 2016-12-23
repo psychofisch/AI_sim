@@ -1,0 +1,10 @@
+o
+checkers_128.png
+player.png
+enemy.png
+t
+hole.jpg,0
+concrete.jpg,1
+grass.jpg,2
+soil.jpg,3
+gravel.jpg,4

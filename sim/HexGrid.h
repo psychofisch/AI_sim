@@ -1,0 +1,59 @@
+#pragma once
+#include "gameobj.h"
+#include "vector2math.h"
+
+const sf::Vector3i hex_nb[6] = {	
+	sf::Vector3i(0, -1, +1), sf::Vector3i(-1,  0, +1), sf::Vector3i(-1, +1,  0),
+	sf::Vector3i(0, +1, -1), sf::Vector3i(+1,  0, -1), sf::Vector3i(+1, -1,  0)
+};
+
+const sf::Vector2i hex_nb_hex[2][6] = {
+	{ sf::Vector2i(0, +1), sf::Vector2i(-1, +1), sf::Vector2i(-1, 0),
+	sf::Vector2i(0, -1), sf::Vector2i(+1, 0), sf::Vector2i(+1, +1)},
+	{ sf::Vector2i(0, +1), sf::Vector2i(-1, 0), sf::Vector2i(-1, -1),
+	sf::Vector2i(0, -1), sf::Vector2i(+1, -1), sf::Vector2i(+1, 0) }
+};
+
+class Terrain : public gameobj {
+public:
+	int terrainId;
+};
+
+class HexGrid
+{
+public:
+	HexGrid();
+	~HexGrid();
+
+	std::vector<Terrain>& getGrid();
+	std::vector<float>& getThreatMap();
+	void dimensions(const sf::Vector2i& d);
+
+	//mimic vector behaviour
+	Terrain &operator[](int i);
+	size_t size() const;
+	void push_back(const Terrain& o);
+	void reserve(size_t s);
+	bool insertTerrain(int id, int costs);//return true = insertion | false = assign
+	void initThreatMap();
+	void clearThreatMap(int val = 0);
+
+	sf::Vector2i dimensions() const;
+	int getGridNumber(sf::Vector2f pos) const;
+	sf::Vector2i getGridCoords(sf::Vector2f pos) const;
+	sf::Vector2i getGridCoords(int pos) const;
+	int getTerrain(int key);//TODO: make const
+
+	//statics
+	static sf::Vector3i hexToCube(sf::Vector2i hex);
+	static sf::Vector2i cubeToHex(sf::Vector3i cube);
+	static int hexDistance(sf::Vector2i a, sf::Vector2i b);
+	static sf::Vector2i rotate(sf::Vector2i a, sf::Vector2i b, int t);
+
+private:
+	sf::Vector2i m_dimension;
+	std::vector<Terrain> m_grid;
+	std::vector<float> m_threat;
+	std::map<int, int> m_terrains;
+};
+
