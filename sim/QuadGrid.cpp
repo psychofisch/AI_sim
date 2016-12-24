@@ -97,6 +97,21 @@ int QuadGrid::getTerrain(int key)
 	return m_terrains[key];//operator[] const?
 }
 
+sf::Vector2f QuadGrid::getRealCoords(int p)
+{
+	return m_grid[p].getPosition();
+}
+
+sf::Vector2f QuadGrid::getRealCoords(sf::Vector2i p)
+{
+	return getRealCoords(p.x + p.y * m_dimension.x);
+}
+
+sf::Vector2f QuadGrid::getRealCoords(int x, int y)
+{
+	return getRealCoords(sf::Vector2i(x, y));
+}
+
 int QuadGrid::quadDistance(sf::Vector2i a, sf::Vector2i b)
 {
 	return std::abs(a.x - b.x) + std::abs(a.y - b.y);

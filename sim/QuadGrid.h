@@ -50,6 +50,9 @@ public:
 	sf::Vector2i getGridCoords(sf::Vector2f pos) const;
 	sf::Vector2i getGridCoords(int pos) const;
 	int getTerrain(int key);//TODO: make const
+	sf::Vector2f getRealCoords(int p);
+	sf::Vector2f getRealCoords(sf::Vector2i p);
+	sf::Vector2f getRealCoords(int x, int y);
 
 	//statics
 	static int quadDistance(sf::Vector2i a, sf::Vector2i b);

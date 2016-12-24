@@ -30,6 +30,7 @@ void QuadWorld::run()
 	m_threatTile.setFillColor(sf::Color::Red);
 
 	m_player.setGrid(&m_grid);
+	m_player.setPosition(m_grid.getRealCoords(16, 10));
 
 	bool quit = false;
 	while (!quit)
