@@ -126,20 +126,13 @@ void Enemy::update(float dt)
 	sf::Vector2i threatTile = m_quadgrid->getGridCoords(getPosition());
 	m_quadgrid->getThreatMap()[threatTile.x + (threatTile.y * m_quadgrid->dimensions().y)] = 1.f;
 
-	int nbInd = roundf(getRotation() / 60.f);
-	threatTile += hex_nb_hex[threatTile.x & 1][nbInd];
-	//std::cout << m_hexgrid->cubeToHex(hex_nb[nbInd]).x << "|" << m_hexgrid->cubeToHex(hex_nb[nbInd]).y << std::endl;
-	//if (m_hexgrid->hexDistance(threatTile, m_hexgrid->getGridCoords(getPosition())) > 1.5f)
-	//	std::cout << "mööp!\n";
-	//std::cout << m_hexgrid->hexDistance(threatTile, m_hexgrid->getGridCoords(getPosition())) << std::endl;
+	int nbInd = roundf(getRotation() / 90.f);
+	threatTile += quad_nb[nbInd];
 	m_quadgrid->getThreatMap()[threatTile.x + (threatTile.y * m_quadgrid->dimensions().y)] = .9f;
 	
-	for (int i = 0; i < 6; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
-		//for(int j = 0; j < 6; ++j)
-		//sf::Vector2i threatHelper = threatTile + m_hexgrid->cubeToHex(hex_nb[i]);
-		int p = (threatTile.x ) & 1;
-		sf::Vector2i threatHelper = threatTile + (hex_nb_hex[p][i]);
+		sf::Vector2i threatHelper = threatTile + (quad_nb[i]);
 		int pos = threatHelper.x + (threatHelper.y * m_quadgrid->dimensions().y);
 		if(pos > 0 && pos < m_quadgrid->size())
 			m_quadgrid->getThreatMap()[pos] += .2f;

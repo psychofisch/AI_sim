@@ -22,11 +22,9 @@ std::vector<Astar::Node> Astar::findPath(QuadGrid & grid, const sf::Vector2i & s
 				nodes[i].todo = false;
 		}
 
-		for (int i = 0; i < 6; ++i)
+		for (int i = 0; i < 4; ++i)
 		{
-			//Node tmp(HexGrid::cubeToHex(HexGrid::hexToCube(currentNode) + hex_nb[i]));
-			int p = (currentNode.x) & 1;
-			Node tmp(currentNode + hex_nb_hex[p][i]);
+			Node tmp(currentNode + quad_nb[i]);
 			if (tmp < sf::Vector2i(0, 0) || tmp > grid.dimensions() - 1)
 				continue;
 

@@ -2,6 +2,7 @@
 #include "gameobj.h"
 #include "vector2math.h"
 
+/*
 const sf::Vector3i hex_nb[6] = {	
 	sf::Vector3i(0, -1, +1), sf::Vector3i(-1,  0, +1), sf::Vector3i(-1, +1,  0),
 	sf::Vector3i(0, +1, -1), sf::Vector3i(+1,  0, -1), sf::Vector3i(+1, -1,  0)
@@ -12,6 +13,12 @@ const sf::Vector2i hex_nb_hex[2][6] = {
 	sf::Vector2i(0, -1), sf::Vector2i(+1, 0), sf::Vector2i(+1, +1)},
 	{ sf::Vector2i(0, +1), sf::Vector2i(-1, 0), sf::Vector2i(-1, -1),
 	sf::Vector2i(0, -1), sf::Vector2i(+1, -1), sf::Vector2i(+1, 0) }
+};
+*/
+
+const sf::Vector2i quad_nb[4] = {
+	sf::Vector2i(0, -1), sf::Vector2i(1,  0),
+	sf::Vector2i(0, 1), sf::Vector2i(-1, 0)
 };
 
 class Terrain : public gameobj {
