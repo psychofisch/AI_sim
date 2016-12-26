@@ -34,8 +34,6 @@ std::vector<Astar::Node> Astar::findPath(QuadGrid & grid, const sf::Vector2i & s
 
 			tmp.todo = true;
 			tmp.costs = QuadGrid::quadDistance(start, tmp) + terrain;
-			if (player)
-				tmp.costs += static_cast<int>(roundf(grid.getThreatMap()[tmp.x + tmp.y * grid.dimensions().y] * 10.f));
 			tmp.prev = currentNode;
 
 			int prevCosts = 0;

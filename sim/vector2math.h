@@ -32,3 +32,5 @@ bool isBetween(sf::Vector2f a, sf::Vector2f p, sf::Vector2f b);
 bool isBetween(float a, float p, float b);
 bool isNotZero(sf::Vector2f& v);
 sf::FloatRect growBox(sf::FloatRect& r, float f);
+
+float clamp(float v, float upperLimit = 100.f, float lowerLimit = 0.f);

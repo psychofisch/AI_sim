@@ -1,4 +1,7 @@
 #pragma once
+
+#include <sstream>
+
 #include "gameobj.h"
 #include "Astar.h"
 #include "QuadGrid.h"
@@ -13,6 +16,7 @@ public:
 	int getTarget() const;
 	bool isPlayer() const;
 	void drawPath(sf::RenderWindow* wndw);
+	void drawStats(sf::RenderWindow* wndw, sf::Text& text);
 
 	virtual void update(float dt);
 	bool setTarget(int t);
@@ -21,6 +25,7 @@ public:
 	
 protected:
 	int m_targetTile;
+	int m_aliveTick;
 	bool m_player;
 	std::vector<Astar::Node> m_path;
 	int m_pathPos;

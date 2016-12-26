@@ -8,7 +8,8 @@ Agent::Agent()
 	m_health(100.f),
 	m_thirst(25.f),
 	m_hunger(25.f),
-	m_fatique(25.f)
+	m_fatique(25.f),
+	m_aliveTick(0)
 {
 }
 
@@ -48,8 +49,31 @@ void Agent::drawPath(sf::RenderWindow * wndw)
 	}
 }
 
+void Agent::drawStats(sf::RenderWindow * wndw, sf::Text& text)
+{
+	std::stringstream tmp;
+	tmp << ((m_alive) ? "ALIVE" : "DEAD") << std::endl << std::endl << 
+		m_health << std::endl <<
+		m_thirst << std::endl <<
+		m_hunger << std::endl <<
+		m_fatique;
+
+	text.setString(tmp.str());
+	wndw->draw(text);
+}
+
 void Agent::update(float dt)
 {
+	int oldTarget = m_targetTile;
+	m_aliveTick++;
+
+	if (m_aliveTick % 10)
+	{
+		m_thirst += 1.f;
+		m_thirst = clamp(m_thirst);
+	}
+	
+
 	if (m_targetTile != -1 && getPosition() != (*m_quadgrid)[m_targetTile].getPosition())
 		setTarget(m_targetTile);
 
@@ -62,8 +86,6 @@ void Agent::update(float dt)
 		setPosition((*m_quadgrid)[gridpos].getPosition());
 		setRotation(rot - 90.f);
 	}
-
-
 }
 
 bool Agent::setTarget(int t)

@@ -8,6 +8,7 @@ QuadWorld::QuadWorld()
 	stepMode(false)
 {
 	m_currentTile.setFillColor(sf::Color(255,0,0, 128));
+
 }
 
 

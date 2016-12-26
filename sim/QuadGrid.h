@@ -26,6 +26,8 @@ public:
 	int terrainId;
 };
 
+enum class Resource { Water = 0, Food = 1, Safety = 2 };
+
 class QuadGrid
 {
 public:
@@ -64,7 +66,7 @@ public:
 private:
 	sf::Vector2i m_dimension;
 	std::vector<Terrain> m_grid;
-	std::vector<float> m_threat;
+	std::vector<Resource> m_resources;
 	std::map<int, int> m_terrains;
 };
 
