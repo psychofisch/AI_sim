@@ -16,10 +16,10 @@ std::vector<Terrain>& QuadGrid::getGrid()
 	return m_grid;
 }
 
-std::vector<float>& QuadGrid::getThreatMap()
+/*std::vector<float>& QuadGrid::getThreatMap()
 {
 	return m_threat;
-}
+}*/
 
 size_t QuadGrid::size() const
 {
@@ -41,6 +41,7 @@ bool QuadGrid::insertTerrain(int id, int costs)
 	return m_terrains.insert_or_assign(id, costs).second;
 }
 
+/*
 void QuadGrid::initThreatMap()
 {
 	m_threat.resize(m_grid.size(), .0f);
@@ -50,7 +51,7 @@ void QuadGrid::clearThreatMap(int val)
 {
 	std::fill(m_threat.begin(), m_threat.end(), val);
 }
-
+*/
 sf::Vector2i QuadGrid::dimensions() const
 {
 	return m_dimension;
@@ -59,7 +60,7 @@ sf::Vector2i QuadGrid::dimensions() const
 void QuadGrid::dimensions(const sf::Vector2i& d)
 {
 	m_dimension = d;
-	m_threat.resize(d.x * d.y);
+	//m_threat.resize(d.x * d.y);
 }
 
 int QuadGrid::getGridNumber(sf::Vector2f pos) const

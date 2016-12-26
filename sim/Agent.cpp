@@ -145,6 +145,7 @@ void Enemy::update(float dt)
 
 	Agent::update(dt);
 
+	/*
 	sf::Vector2i threatTile = m_quadgrid->getGridCoords(getPosition());
 	m_quadgrid->getThreatMap()[threatTile.x + (threatTile.y * m_quadgrid->dimensions().y)] = 1.f;
 
@@ -159,4 +160,5 @@ void Enemy::update(float dt)
 		if(pos > 0 && pos < m_quadgrid->size())
 			m_quadgrid->getThreatMap()[pos] += .2f;
 	}
+	*/
 }

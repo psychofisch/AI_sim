@@ -35,7 +35,7 @@ public:
 	~QuadGrid();
 
 	std::vector<Terrain>& getGrid();
-	std::vector<float>& getThreatMap();
+	//std::vector<float>& getThreatMap();
 	void dimensions(const sf::Vector2i& d);
 
 	//mimic vector behaviour
@@ -44,8 +44,8 @@ public:
 	void push_back(const Terrain& o);
 	void reserve(size_t s);
 	bool insertTerrain(int id, int costs);//return true = insertion | false = assign
-	void initThreatMap();
-	void clearThreatMap(int val = 0);
+	//void initThreatMap();
+	//void clearThreatMap(int val = 0);
 
 	sf::Vector2i dimensions() const;
 	int getGridNumber(sf::Vector2f pos) const;

@@ -9,6 +9,9 @@ QuadWorld::QuadWorld()
 {
 	m_currentTile.setFillColor(sf::Color(255,0,0, 128));
 
+	m_HUDFont.loadFromFile("noto.ttf");
+	m_HUDText.setFont(m_HUDFont);
+	m_HUDText.setCharacterSize(30);
 }
 
 
@@ -141,7 +144,7 @@ void QuadWorld::run()
 			if (m_step == true)
 			{
 				tickRun = tick;
-				m_grid.clearThreatMap();
+				//m_grid.clearThreatMap();
 				for (auto&& e : m_enemies)
 					e.update(dt);
 				m_player.update(dt);
@@ -158,8 +161,8 @@ void QuadWorld::run()
 
 		for (int i = 0; i < m_grid.size(); ++i)
 		{
-			m_threatTile.setPosition(m_grid[i].getPosition());
-			m_threatTile.setFillColor(sf::Color(255, 0, 0, m_grid.getThreatMap()[i] * 255.f));
+			//m_threatTile.setPosition(m_grid[i].getPosition());
+			//m_threatTile.setFillColor(sf::Color(255, 0, 0, m_grid.getThreatMap()[i] * 255.f));
 			m_window->draw(m_grid[i]);
 
 			m_window->draw(m_threatTile/*, sf::RenderStates(sf::BlendMultiply)*/);
@@ -175,6 +178,8 @@ void QuadWorld::run()
 		m_window->draw(m_player);
 
 		m_window->setView(m_window->getDefaultView());
+
+		m_player.drawStats(m_window, m_HUDText);
 
 		m_window->display();
 		//*** render
@@ -213,5 +218,5 @@ void QuadWorld::i_init()
 	int hexOffsetY = 0.07f * m_texture[1]->getSize().y;
 	m_player.setTextureRect(sf::IntRect(0, hexOffsetY, m_texture[1]->getSize().x, m_texture[1]->getSize().y - 2 * hexOffsetY));
 
-	m_grid.initThreatMap();
+	//m_grid.initThreatMap();
 }
