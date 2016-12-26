@@ -9,6 +9,7 @@ FileIO::~FileIO()
 {
 }
 
+/*
 sf::Vector2i FileIO::LoadLevel(const char* path, QuadGrid& grid, std::vector<sf::Texture*>& textures, bool debug)
 {
 	sf::Vector2i size(0, 0);
@@ -101,6 +102,8 @@ sf::Vector2i FileIO::LoadLevel(const char* path, QuadGrid& grid, std::vector<sf:
 
 	return size;
 }
+*/
+
 sf::Vector2i FileIO::LoadLevel(const char * gridpath, const char* texpath, QuadGrid& grid, std::vector<sf::Texture*>& textures, bool debug)
 {
 	//load Textures
@@ -167,9 +170,13 @@ sf::Vector2i FileIO::LoadLevel(const char * gridpath, const char* texpath, QuadG
 	Terrain tmp_obj;
 	//tmp_obj.setOutlineThickness(-.2f);
 	tmp_obj.setOutlineColor(sf::Color::Red);
+
+	std::vector<Resource>& resources = grid.getResource();
+
 	for(int y = 0; y < size.y; ++y)
 		for (int x = 0; x < size.x; ++x)
 		{
+			//fill terrain
 			int texId = lvl.getPixel(x, y).r/10 - 1;
 			texId += texOffset;
 			if (textures.size() > texId)
@@ -189,40 +196,19 @@ sf::Vector2i FileIO::LoadLevel(const char * gridpath, const char* texpath, QuadG
 			tmp_obj.setPosition(sf::Vector2f(x * size_fac, y * size_fac));
 
 			grid.push_back(tmp_obj);
+
+			//fill resource
+			int resId = lvl.getPixel(x, y).g / 10;
+			if(resId < Resource::RESOURCE_SIZE)
+				resources.push_back(static_cast<Resource>(resId));
+			else
+				resources.push_back(Resource::Empty);
 		}
 	//***
 
 	return size;
 }
-/*
-bool FileIO::LoadPath(const char * path, std::vector<sf::Vector2f>& waypoints)
-{
-	std::ifstream file;
-	file.open(path);
-	if (!file.is_open())
-	{
-		std::cout << "Failed to open file: " << path << std::endl;
-		return false;
-	}
 
-	do {
-		std::string tmp;
-		std::getline(file, tmp);
-
-		if (tmp.size() == 0)
-			break;
-
-		float x, y;
-		sscanf_s(tmp.c_str(), "%f,%f", &x, &y);
-
-		waypoints.push_back(sf::Vector2f(x, y));
-	} while (!file.eof());
-
-	file.close();
-
-	return true;
-}
-*/
 std::string FileIO::LoadText(const char* path)
 {
 	std::ifstream file(path);

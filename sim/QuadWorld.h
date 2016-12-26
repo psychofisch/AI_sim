@@ -13,7 +13,7 @@ public:
 	~QuadWorld();
 
 	void run();
-	void loadLevel(const char* path);
+	//void loadLevel(const char* path);
 	void loadLevel(const char* gridpath, const char* texpath);
 	void setRenderWindow(sf::RenderWindow* wndw);
 
@@ -27,7 +27,6 @@ private:
 	Agent m_player;
 	std::vector<Enemy> m_enemies;
 	Block m_currentTile;
-	Block m_threatTile;
 	QuadGrid m_grid;
 	std::vector<sf::Texture*> m_texture;
 	sf::RenderWindow* m_window;

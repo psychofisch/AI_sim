@@ -21,7 +21,7 @@ public:
 		sf::Vector2i prev;
 
 		Node(sf::Vector2i p)
-			:costs(HUGE_VALF),
+			:costs(0),//TODO: INFINITY and HUGE_VALF also works, INT_AX doesnt, why?
 			todo(true),
 			prev(-1,-1)
 		{
@@ -50,6 +50,5 @@ public:
 	static std::vector<Node> findPath(QuadGrid& grid, const sf::Vector2i& start, const sf::Vector2i& end, bool player);
 
 private:
-	bool i_nextStep(QuadGrid& grid);
 };
 

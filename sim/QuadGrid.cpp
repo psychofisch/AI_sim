@@ -16,6 +16,11 @@ std::vector<Terrain>& QuadGrid::getGrid()
 	return m_grid;
 }
 
+std::vector<Resource>& QuadGrid::getResource()
+{
+	return m_resources;
+}
+
 /*std::vector<float>& QuadGrid::getThreatMap()
 {
 	return m_threat;
@@ -41,17 +46,18 @@ bool QuadGrid::insertTerrain(int id, int costs)
 	return m_terrains.insert_or_assign(id, costs).second;
 }
 
-/*
-void QuadGrid::initThreatMap()
+void QuadGrid::initResources()
 {
-	m_threat.resize(m_grid.size(), .0f);
+	m_resources.resize(m_grid.size(), Resource::Empty);
 }
 
+/*
 void QuadGrid::clearThreatMap(int val)
 {
 	std::fill(m_threat.begin(), m_threat.end(), val);
 }
 */
+
 sf::Vector2i QuadGrid::dimensions() const
 {
 	return m_dimension;
@@ -60,7 +66,7 @@ sf::Vector2i QuadGrid::dimensions() const
 void QuadGrid::dimensions(const sf::Vector2i& d)
 {
 	m_dimension = d;
-	//m_threat.resize(d.x * d.y);
+	m_resources.resize(d.x * d.y);
 }
 
 int QuadGrid::getGridNumber(sf::Vector2f pos) const
@@ -111,6 +117,21 @@ sf::Vector2f QuadGrid::getRealCoords(sf::Vector2i p)
 sf::Vector2f QuadGrid::getRealCoords(int x, int y)
 {
 	return getRealCoords(sf::Vector2i(x, y));
+}
+
+std::vector<int> QuadGrid::getResourceFields(Resource r)
+{
+	std::vector<int> result;
+
+	for (int i = 0; i < m_resources.size(); ++i)
+	{
+		if (m_resources[i] == r)
+		{
+			result.push_back(i);
+		}
+	}
+
+	return result;
 }
 
 int QuadGrid::quadDistance(sf::Vector2i a, sf::Vector2i b)

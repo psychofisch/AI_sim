@@ -5,12 +5,11 @@ Agent::Agent()
 	m_pathPos(0),
 	m_player(false),
 	m_alive(true),
-	m_health(100.f),
-	m_thirst(25.f),
-	m_hunger(25.f),
-	m_fatique(25.f),
 	m_aliveTick(0)
 {
+	for (int i = 0; i < Stats::STATS_SIZE; ++i)
+		m_stats.push_back(25);
+	m_stats[Stats::health] = 100;
 }
 
 Agent::~Agent()
@@ -52,28 +51,56 @@ void Agent::drawPath(sf::RenderWindow * wndw)
 void Agent::drawStats(sf::RenderWindow * wndw, sf::Text& text)
 {
 	std::stringstream tmp;
-	tmp << ((m_alive) ? "ALIVE" : "DEAD") << std::endl << std::endl << 
-		m_health << std::endl <<
-		m_thirst << std::endl <<
-		m_hunger << std::endl <<
-		m_fatique;
-
+	tmp << ((m_alive) ? "ALIVE" : "DEAD") << std::endl << 
+		"H " << m_stats[Stats::health] << std::endl <<
+		"T " << m_stats[Stats::thirst] << std::endl <<
+		"H " << m_stats[Stats::hunger] << std::endl <<
+		"F " << m_stats[Stats::fatique] << std::endl <<
+		"S " << m_stats[Stats::safety];
 	text.setString(tmp.str());
+
+	if (m_alive == false)
+		text.setFillColor(sf::Color::Red);
+
 	wndw->draw(text);
 }
 
 void Agent::update(float dt)
 {
+	if (m_alive == false)
+		return;
+
 	int oldTarget = m_targetTile;
 	m_aliveTick++;
 
-	if (m_aliveTick % 10)
+	//*** stats calc
+	if (m_aliveTick % 1 == 0)
 	{
-		m_thirst += 1.f;
-		m_thirst = clamp(m_thirst);
+		m_stats[Stats::thirst] += 5;
 	}
 	
+	m_stats[Stats::health] = clamp(m_stats[Stats::health]);
+	for (int i = 1; i < Stats::STATS_SIZE; ++i)//start at 1 because health is does not affect health
+	{
+		m_stats[i] = clamp(m_stats[i]);
+		if (m_stats[i] >= 100)
+		{
+			m_stats[0] -= 5;//if any stat is higher than 100 -> lower health
+			break;
+		}
+	}
+	//*** sc
 
+	//survival instinct
+
+	//*** si
+
+	//Die
+	if (m_stats[Stats::health] <= 0)
+		m_alive = false;
+	//*** d
+
+	//Moving
 	if (m_targetTile != -1 && getPosition() != (*m_quadgrid)[m_targetTile].getPosition())
 		setTarget(m_targetTile);
 
@@ -86,6 +113,7 @@ void Agent::update(float dt)
 		setPosition((*m_quadgrid)[gridpos].getPosition());
 		setRotation(rot - 90.f);
 	}
+	//*** m
 }
 
 bool Agent::setTarget(int t)

@@ -112,14 +112,3 @@ sf::FloatRect growBox(sf::FloatRect & r, float f)
 {
 	return sf::FloatRect(r.left - f, r.top - f, r.width + (f*2.f), r.height + (f*2.f));
 }
-
-float clamp(float v, float upperLimit, float lowerLimit)
-{
-	float result = v;
-	if (v > upperLimit)
-		result = upperLimit;
-	else if (v < lowerLimit)
-		result = lowerLimit;
-	return result;
-}
-

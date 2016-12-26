@@ -12,6 +12,9 @@ QuadWorld::QuadWorld()
 	m_HUDFont.loadFromFile("noto.ttf");
 	m_HUDText.setFont(m_HUDFont);
 	m_HUDText.setCharacterSize(30);
+	m_HUDText.setOutlineColor(sf::Color::Black);
+	m_HUDText.setOutlineThickness(1.0f);
+	m_HUDText.setPosition(10.f, 10.f);
 }
 
 
@@ -30,8 +33,6 @@ void QuadWorld::run()
 	float dt = 0.0f;
 	float tickRun = tick;
 	int currentTile = -1;
-
-	m_threatTile.setFillColor(sf::Color::Red);
 
 	m_player.setGrid(&m_grid);
 	m_player.setPosition(m_grid.getRealCoords(16, 10));
@@ -144,7 +145,6 @@ void QuadWorld::run()
 			if (m_step == true)
 			{
 				tickRun = tick;
-				//m_grid.clearThreatMap();
 				for (auto&& e : m_enemies)
 					e.update(dt);
 				m_player.update(dt);
@@ -161,11 +161,7 @@ void QuadWorld::run()
 
 		for (int i = 0; i < m_grid.size(); ++i)
 		{
-			//m_threatTile.setPosition(m_grid[i].getPosition());
-			//m_threatTile.setFillColor(sf::Color(255, 0, 0, m_grid.getThreatMap()[i] * 255.f));
 			m_window->draw(m_grid[i]);
-
-			m_window->draw(m_threatTile/*, sf::RenderStates(sf::BlendMultiply)*/);
 		}
 		m_player.drawPath(m_window);
 		m_window->draw(m_currentTile);
@@ -188,12 +184,12 @@ void QuadWorld::run()
 	}
 }
 
-void QuadWorld::loadLevel(const char* path)
+/*void QuadWorld::loadLevel(const char* path)
 {
 	FileIO::LoadLevel(path, m_grid, m_texture);
 
 	i_init();
-}
+}*/
 
 void QuadWorld::loadLevel(const char * gridpath, const char * texpath)
 {
@@ -217,6 +213,4 @@ void QuadWorld::i_init()
 	m_player.setTexture(m_texture, 1);
 	int hexOffsetY = 0.07f * m_texture[1]->getSize().y;
 	m_player.setTextureRect(sf::IntRect(0, hexOffsetY, m_texture[1]->getSize().x, m_texture[1]->getSize().y - 2 * hexOffsetY));
-
-	//m_grid.initThreatMap();
 }

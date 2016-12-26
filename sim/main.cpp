@@ -8,11 +8,11 @@
 void main(int argc, const char* argv[])
 {
 	float tick = .1f;
-	std::string pic = "level1.bmp",
+	std::string pic = "levelZ.bmp",
 				level = "test_level_tex.txt";
 
 	if (argc == 2)
-		tick = std::atof(argv[1]);
+		tick = std::stof(argv[1]);
 
 	if (argc >= 3)
 	{
@@ -22,7 +22,7 @@ void main(int argc, const char* argv[])
 
 	if (argc == 4)
 	{
-		tick = std::atof(argv[3]);
+		tick = std::stof(argv[3]);
 	}
 
 	//init
@@ -44,7 +44,6 @@ void main(int argc, const char* argv[])
 	hw.stepMode = true;
 	hw.setRenderWindow(&window);
 	hw.loadLevel(pic.c_str(), level.c_str());
-	//hw.loadLevel("test_level.txt");
 
 	hw.run();
 }

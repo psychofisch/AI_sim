@@ -33,4 +33,15 @@ bool isBetween(float a, float p, float b);
 bool isNotZero(sf::Vector2f& v);
 sf::FloatRect growBox(sf::FloatRect& r, float f);
 
-float clamp(float v, float upperLimit = 100.f, float lowerLimit = 0.f);
+//float clamp(float v, float upperLimit = 100.f, float lowerLimit = 0.f);
+
+template <typename T>
+inline T clamp(T v, T upperLimit = T(100), T lowerLimit = T(0))
+{
+	T result = v;
+	if (v > upperLimit)
+		result = upperLimit;
+	else if (v < lowerLimit)
+		result = lowerLimit;
+	return result;
+}

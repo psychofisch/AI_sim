@@ -6,6 +6,8 @@
 #include "Astar.h"
 #include "QuadGrid.h"
 
+enum Stats { health = 0, thirst, hunger, fatique, safety, STATS_SIZE };
+
 class Agent : public gameobj
 {
 public:
@@ -31,10 +33,11 @@ protected:
 	int m_pathPos;
 	QuadGrid* m_quadgrid;
 	bool m_alive;
-	float	m_health,
+	std::vector<int> m_stats;
+	/*int	m_health,
 		m_thirst,
 		m_hunger,
-		m_fatique;
+		m_fatique;*/
 };
 
 class Enemy : public Agent
