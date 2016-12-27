@@ -7,7 +7,7 @@
 
 void main(int argc, const char* argv[])
 {
-	float tick = .1f;
+	float tick = .2f;
 	std::string pic = "levelZ.bmp",
 				level = "test_level_tex.txt";
 

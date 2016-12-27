@@ -85,7 +85,8 @@ void Agent::update(float dt)
 	//*** stats calc
 	if (m_aliveTick % 1 == 0)
 	{
-		m_stats[Stats::thirst] += 5;
+		m_stats[Stats::thirst] += 2;
+		m_stats[Stats::hunger] += 1;
 	}
 	
 	Resource currentResource = m_quadgrid->getResource(iPos);
@@ -99,33 +100,38 @@ void Agent::update(float dt)
 		if (m_stats[i] >= 100)
 		{
 			m_stats[0] -= 5;//if any stat is higher than 100 -> lower health
-			break;
+			break;			//dont lower health faster when more than one stat is cirtical
 		}
 	}
 	//*** sc
 
 	//survival instinct
-	if (m_stats[Stats::thirst] > 50 && currentResource != Resource::Water)
+	for (int s = 1; s < Stats::STATS_SIZE; ++s)
 	{
-		std::vector<int> water = m_quadgrid->findResource(Resource::Water);
-		int minWaterInd = -1;
-		int minDist = INT_MAX;
-		for (int i = 0; i < water.size(); ++i)
+		if (m_stats[s] > 50 && currentResource != s)
 		{
-			int tmpDist = Astar::findPath(*m_quadgrid, iPos, m_quadgrid->getGridCoords(water[i])).size();
-			if (tmpDist < minDist)
+			std::vector<int> fields = m_quadgrid->findResource(static_cast<Resource>(s));
+			int minResInd = -1;
+			int minDist = INT_MAX;
+			for (int i = 0; i < fields.size(); ++i)
 			{
-				minWaterInd = i;
-				minDist = tmpDist;
+				int tmpDist = Astar::findPath(*m_quadgrid, iPos, m_quadgrid->getGridCoords(fields[i])).size();
+				if (tmpDist < minDist)
+				{
+					minResInd = i;
+					minDist = tmpDist;
+				}
 			}
-		}
 
-		if (minWaterInd != -1)
-		{
-			setTarget(water[minWaterInd]);
+			if (minResInd != -1)
+			{
+				setTarget(fields[minResInd]);
+			}
+			else
+				std::cout << "no water source found! =(\n";
+			
+			break; //only do one thing at the time & stats are sorted by priority
 		}
-		else
-			std::cout << "no water source found! =(\n";
 	}
 	//*** si
 
