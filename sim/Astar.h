@@ -47,7 +47,7 @@ public:
 	Astar();
 	~Astar();
 
-	static std::vector<Node> findPath(QuadGrid& grid, const sf::Vector2i& start, const sf::Vector2i& end, bool player);
+	static std::vector<Node> findPath(QuadGrid& grid, const sf::Vector2i start, const sf::Vector2i end, bool player = false);
 
 private:
 };

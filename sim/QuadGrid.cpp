@@ -66,7 +66,7 @@ sf::Vector2i QuadGrid::dimensions() const
 void QuadGrid::dimensions(const sf::Vector2i& d)
 {
 	m_dimension = d;
-	m_resources.resize(d.x * d.y);
+	//m_resources.resize(d.x * d.y);
 }
 
 int QuadGrid::getGridNumber(sf::Vector2f pos) const
@@ -104,6 +104,16 @@ int QuadGrid::getTerrain(int key)
 	return m_terrains[key];//operator[] const?
 }
 
+Resource QuadGrid::getResource(int index)
+{
+	return m_resources[index];
+}
+
+Resource QuadGrid::getResource(sf::Vector2i pos)
+{
+	return getResource(pos.x + pos.y * m_dimension.y);
+}
+
 sf::Vector2f QuadGrid::getRealCoords(int p)
 {
 	return m_grid[p].getPosition();
@@ -119,7 +129,7 @@ sf::Vector2f QuadGrid::getRealCoords(int x, int y)
 	return getRealCoords(sf::Vector2i(x, y));
 }
 
-std::vector<int> QuadGrid::getResourceFields(Resource r)
+std::vector<int> QuadGrid::findResource(Resource r)
 {
 	std::vector<int> result;
 

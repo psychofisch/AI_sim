@@ -9,7 +9,7 @@ Astar::~Astar()
 {
 }
 
-std::vector<Astar::Node> Astar::findPath(QuadGrid & grid, const sf::Vector2i & start, const sf::Vector2i & end, bool player)
+std::vector<Astar::Node> Astar::findPath(QuadGrid & grid, const sf::Vector2i start, const sf::Vector2i end, bool player)
 {
 	std::vector<Node> nodes;
 

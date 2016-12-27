@@ -73,12 +73,18 @@ void Agent::update(float dt)
 	int oldTarget = m_targetTile;
 	m_aliveTick++;
 
+	sf::Vector2i iPos = m_quadgrid->getGridCoords(getPosition());
+
 	//*** stats calc
 	if (m_aliveTick % 1 == 0)
 	{
 		m_stats[Stats::thirst] += 5;
 	}
 	
+	Resource currentResource = m_quadgrid->getResource(iPos);
+	if (currentResource > Resource::Empty && currentResource < Resource::RESOURCE_SIZE)
+		m_stats[currentResource] -= 10;
+
 	m_stats[Stats::health] = clamp(m_stats[Stats::health]);
 	for (int i = 1; i < Stats::STATS_SIZE; ++i)//start at 1 because health is does not affect health
 	{
@@ -92,7 +98,28 @@ void Agent::update(float dt)
 	//*** sc
 
 	//survival instinct
+	if (m_stats[Stats::thirst] > 50 && currentResource != Resource::Water)
+	{
+		std::vector<int> water = m_quadgrid->findResource(Resource::Water);
+		int minWaterInd = -1;
+		int minDist = INT_MAX;
+		for (int i = 0; i < water.size(); ++i)
+		{
+			int tmpDist = Astar::findPath(*m_quadgrid, iPos, m_quadgrid->getGridCoords(water[i])).size();
+			if (tmpDist < minDist)
+			{
+				minWaterInd = i;
+				minDist = tmpDist;
+			}
+		}
 
+		if (minWaterInd != -1)
+		{
+			setTarget(water[minWaterInd]);
+		}
+		else
+			std::cout << "no water source found! =(\n";
+	}
 	//*** si
 
 	//Die

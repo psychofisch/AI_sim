@@ -38,10 +38,12 @@ public:
 	sf::Vector2i getGridCoords(sf::Vector2f pos) const;
 	sf::Vector2i getGridCoords(int pos) const;
 	int getTerrain(int key);					//TODO: make const
+	Resource getResource(int index);			//TODO: make const
+	Resource getResource(sf::Vector2i pos);		//TODO: make const
 	sf::Vector2f getRealCoords(int p);			//TODO: make const
 	sf::Vector2f getRealCoords(sf::Vector2i p);	//TODO: make const
 	sf::Vector2f getRealCoords(int x, int y);	//TODO: make const
-	std::vector<int> getResourceFields(Resource r);
+	std::vector<int> findResource(Resource r);
 
 	//statics
 	static int quadDistance(sf::Vector2i a, sf::Vector2i b);
