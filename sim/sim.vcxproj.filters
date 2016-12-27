@@ -103,6 +103,9 @@
     <Image Include="test_level.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="levelZ.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="test_level.txt">

@@ -7,7 +7,7 @@ QuadWorld::QuadWorld()
 	m_step(true),
 	stepMode(false)
 {
-	m_currentTile.setFillColor(sf::Color(255,0,0, 128));
+	m_currentTile.setFillColor(sf::Color(255, 0, 0, 128));
 
 	m_HUDFont.loadFromFile("noto.ttf");
 	m_HUDText.setFont(m_HUDFont);
@@ -56,13 +56,9 @@ void QuadWorld::run()
 			}
 			else if (eve.type == sf::Event::MouseButtonPressed && eve.mouseButton.button == sf::Mouse::Left)
 			{
-				if (m_player.getTarget() != -1)
-					m_grid[m_player.getTarget()].setFillColor(sf::Color::White);
-
 				m_player.setTarget(m_grid.getGridNumber(mousePos_mapped));
 				if (m_player.getTarget() == -1)
 					break;
-				m_grid[m_player.getTarget()].setFillColor(sf::Color::Magenta);
 
 				sf::Vector2i coordsTarget = m_grid.getGridCoords(m_grid[m_player.getTarget()].getPosition());
 				sf::Vector2i coordsPlayer = m_grid.getGridCoords(m_player.getPosition());

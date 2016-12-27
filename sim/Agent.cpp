@@ -46,6 +46,13 @@ void Agent::drawPath(sf::RenderWindow * wndw)
 		h.setPosition((*m_quadgrid)[pos].getPosition());
 		wndw->draw(h);
 	}
+
+	if (m_targetTile > 0)
+	{
+		h.setFillColor(sf::Color(255, 0, 255, 128));
+		h.setPosition((*m_quadgrid)[m_targetTile].getPosition());
+		wndw->draw(h);
+	}
 }
 
 void Agent::drawStats(sf::RenderWindow * wndw, sf::Text& text)

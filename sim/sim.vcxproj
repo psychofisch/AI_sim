@@ -149,6 +149,7 @@
     <Image Include="gravel.jpg" />
     <Image Include="hole.jpg" />
     <Image Include="level1.bmp" />
+    <Image Include="levelZ.bmp" />
     <Image Include="player.png" />
     <Image Include="soil.jpg" />
     <Image Include="test_level.bmp" />
