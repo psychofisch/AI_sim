@@ -194,7 +194,6 @@ void Agent::i_think()
 	int limit = 5;//plan max 5 actions ahead
 	std::map<State::Attributes, bool> savedState(m_state);
 	std::map<State::Attributes, bool> targetState;
-	std::vector<State::Action> todoList;
 
 	//set goals
 	targetState[State::isAlive] = true;
@@ -205,29 +204,51 @@ void Agent::i_think()
 	}
 	//*** sg
 
-	for (int i = 0; i < 5; ++i)
+	bool found = false;
+	for (int i = 1; i <= 5; ++i)//thinking zero steps forward would make no sense
 	{
-		todoList.clear();
 		//Priorities: drink, eat, sleep, safety
 		for (int a = 0; a < State::ACTION_SIZE; ++a)
 		{
 			ActionNode root(static_cast<State::Action>(a), i);
+			do {
+				std::map<State::Attributes, bool> tryStates(savedState);
+				ActionNode* tmp = &root;
+				bool success;
+				for (int n = 0; n < i; ++n)
+				{
+					std::cout << tmp->action;
+					success = State::doAction(tmp->action, tryStates);
+					if (tmp->next.size() == 0)
+					{
+						std::cout << "list done\n";
+						break;
+					}
+					tmp = &tmp->next[0];
+				}
+				std::cout << std::endl;
 
-			std::map<State::Attributes, bool> tryStates(savedState);
-			for (int d = 0; d < todoList.size(); ++d)
-				State::doAction(todoList[d], tryStates);
-			if (mapCompare(targetState, tryStates))
-			{
+				if (success == false)
+					continue;
+
+				if (mapCompare(targetState, tryStates))
+				{
+					found = true;
+					break;
+				}
+			} while (true);
+
+			if (found)
 				break;
-			}
 		}
+		if (found)
+			break;
 	}
+}
 
-	for (int i = 0; i < todoList.size(); ++i)
-	{
-		std::cout << todoList[i];
-	}
-	std::cout << std::endl;
+bool Agent::i_treeLook(ActionNode * an, std::map<State::Attributes, bool> targetState)
+{
+	return false;
 }
 
 Enemy::Enemy()
@@ -290,7 +311,7 @@ bool State::doAction(Action a, std::map<Attributes, bool>& attributes)
 		if (attributes[hasWater] == true)
 		{
 			attributes[isThirsty] = false;
-			return true;
+			//return true;
 		}
 		else
 			return false;
@@ -300,7 +321,7 @@ bool State::doAction(Action a, std::map<Attributes, bool>& attributes)
 		if (attributes[hasFood] == true)
 		{
 			attributes[isHungry] = false;
-			return true;
+			//return true;
 		}
 		else
 			return false;
@@ -310,7 +331,7 @@ bool State::doAction(Action a, std::map<Attributes, bool>& attributes)
 		if (attributes[hasBed] == true)
 		{
 			attributes[isTired] = false;
-			return true;
+			//return true;
 		}
 		else
 			return false;
@@ -318,63 +339,68 @@ bool State::doAction(Action a, std::map<Attributes, bool>& attributes)
 	else if (a == openDoor)
 	{
 		attributes[feelsUnsecure] = true;
-		return true;
+		//return true;
 	}
 	else if (a == closeDoor)
 	{
 		attributes[feelsUnsecure] = false;
-		return false;
+		//return false;
 	}
 	else if (a == gotoWater)
 	{
 		attributes[hasWater] = true;
-		return true;
+		//return true;
 	}
 	else if (a == gotoFood)
 	{
 		attributes[hasFood] = true;
-		return true;
+		//return true;
 	}
 	else if (a == gotoBed)
 	{
 		attributes[hasBed] = true;
-		return true;
+		//return true;
 	}
-	else// if (a == suicide)
+	else if (a == suicide)
 	{
 		attributes[isThirsty] = false;
 		attributes[isHungry] = false;
 		attributes[isTired] = false;
 		attributes[feelsUnsecure] = false;
 		attributes[isAlive] = false;
+		//return true;
+	}
+	else if (a == nothing)
+	{
 		return true;
 	}
+
+	return true;
 }
 
 ActionNode::ActionNode()
 	:action(static_cast<State::Action>(0)),
-	next(nullptr)
+	todo(true)
 {
 }
 
 ActionNode::ActionNode(State::Action a, int depth)
 {
 	action = a;
+	todo = true;
 
-	if (action < 0)
-		std::cout << "WHAT!?!?!?!!?\n";
-
-	if (depth <= 0)
+	if (depth <= 1)
 	{
-		next = nullptr;
+		next = std::vector<ActionNode>();
 	}
 	else
 	{
-		next = new ActionNode[State::ACTION_SIZE]();
+		//next = new ActionNode[State::ACTION_SIZE]();
+		next.resize(State::ACTION_SIZE);
 		for (int i = 0; i < State::ACTION_SIZE; ++i)
 		{
-			//next[i] = ActionNode(static_cast<State::Action>(i), depth - 1);
 			next[i] = ActionNode(static_cast<State::Action>(i), depth - 1);
+			//next.push_back(ActionNode(static_cast<State::Action>(i), depth - 1));
 		}
 	}
 }
@@ -382,7 +408,7 @@ ActionNode::ActionNode(State::Action a, int depth)
 ActionNode::~ActionNode()
 {
 	//for (int i = 0; i < State::ACTION_SIZE; ++i)
-		delete[] next;
+		//delete[] next;
 }
 
 bool mapCompare(std::map<State::Attributes, bool>& a, std::map<State::Attributes, bool>& b)
@@ -391,10 +417,11 @@ bool mapCompare(std::map<State::Attributes, bool>& a, std::map<State::Attributes
 	for (int i = 0; i < State::ATTR_SIZE; ++i)
 	{
 		State::Attributes iCast = static_cast<State::Attributes>(i);
-		if (a.count(iCast) == 1 && b.count(iCast) == 1 && a[iCast] != b[iCast])
+		if (a.count(iCast) == 1 && b.count(iCast) == 1)
 		{
+			if (a[iCast] != b[iCast])
+				return false;
 			count++;
-			return false;
 		}
 	}
 

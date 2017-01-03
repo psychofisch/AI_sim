@@ -12,7 +12,7 @@ enum Stats { health = 0, thirst, hunger, fatique, safety, STATS_SIZE };
 class State {
 public:
 	enum Attributes { isAlive = 0, isThirsty, isHungry, isTired, feelsUnsecure, hasWater, hasFood, hasBed, ATTR_SIZE };
-	enum Action { drink = 0, eat, sleep, openDoor, closeDoor, suicide, gotoWater, gotoFood, gotoBed, ACTION_SIZE };
+	enum Action { nothing = 0, drink, eat, sleep, openDoor, closeDoor, suicide, gotoWater, gotoFood, gotoBed, ACTION_SIZE };
 
 	static bool doAction(Action a, std::map<Attributes, bool>& attributes);
 };
@@ -20,7 +20,8 @@ public:
 class ActionNode {
 public:
 	State::Action action;
-	ActionNode* next;
+	std::vector<ActionNode> next;
+	bool todo;
 	
 	ActionNode();
 	ActionNode(State::Action a, int depth);
@@ -60,6 +61,7 @@ protected:
 	std::vector<State::Action> m_todoList;
 
 	void i_think();
+	bool i_treeLook(ActionNode* an, std::map<State::Attributes, bool> targetState);
 };
 
 class Enemy : public Agent
