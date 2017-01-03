@@ -10,6 +10,8 @@ Agent::Agent()
 	for (int i = 0; i < Stats::STATS_SIZE; ++i)
 		m_stats.push_back(25);
 	m_stats[Stats::health] = 100;
+
+	m_state[State::isAlive] = true;
 }
 
 Agent::~Agent()
@@ -105,7 +107,16 @@ void Agent::update(float dt)
 	}
 	//*** sc
 
+	//state set
+	if (m_stats[Stats::thirst] > 50)
+	{
+		m_state[State::isThirsty] = true;
+	}
+	//*** ss
+
 	//survival instinct
+	i_think();
+	/*
 	for (int s = 1; s < Stats::STATS_SIZE; ++s)
 	{
 		if (m_stats[s] > 50 && currentResource != s)
@@ -132,7 +143,7 @@ void Agent::update(float dt)
 			
 			break; //only do one thing at the time & stats are sorted by priority
 		}
-	}
+	}*/
 	//*** si
 
 	//Die
@@ -176,6 +187,47 @@ void Agent::setGrid(QuadGrid * hg)
 void Agent::isPlayer(bool p)
 {
 	m_player = p;
+}
+
+void Agent::i_think()
+{
+	int limit = 5;//plan max 5 actions ahead
+	std::map<State::Attributes, bool> savedState(m_state);
+	std::map<State::Attributes, bool> targetState;
+	std::vector<State::Action> todoList;
+
+	//set goals
+	targetState[State::isAlive] = true;
+	if (savedState[State::isThirsty] == true)
+	{
+		targetState[State::hasWater] = true;
+		targetState[State::isThirsty] = false;
+	}
+	//*** sg
+
+	for (int i = 0; i < 5; ++i)
+	{
+		todoList.clear();
+		//Priorities: drink, eat, sleep, safety
+		for (int a = 0; a < State::ACTION_SIZE; ++a)
+		{
+			ActionNode root(static_cast<State::Action>(a), i);
+
+			std::map<State::Attributes, bool> tryStates(savedState);
+			for (int d = 0; d < todoList.size(); ++d)
+				State::doAction(todoList[d], tryStates);
+			if (mapCompare(targetState, tryStates))
+			{
+				break;
+			}
+		}
+	}
+
+	for (int i = 0; i < todoList.size(); ++i)
+	{
+		std::cout << todoList[i];
+	}
+	std::cout << std::endl;
 }
 
 Enemy::Enemy()
@@ -229,4 +281,122 @@ void Enemy::update(float dt)
 			m_quadgrid->getThreatMap()[pos] += .2f;
 	}
 	*/
+}
+
+bool State::doAction(Action a, std::map<Attributes, bool>& attributes)
+{
+	if (a == drink)
+	{
+		if (attributes[hasWater] == true)
+		{
+			attributes[isThirsty] = false;
+			return true;
+		}
+		else
+			return false;
+	}
+	else if (a == eat)
+	{
+		if (attributes[hasFood] == true)
+		{
+			attributes[isHungry] = false;
+			return true;
+		}
+		else
+			return false;
+	}
+	else if (a == sleep)
+	{
+		if (attributes[hasBed] == true)
+		{
+			attributes[isTired] = false;
+			return true;
+		}
+		else
+			return false;
+	}
+	else if (a == openDoor)
+	{
+		attributes[feelsUnsecure] = true;
+		return true;
+	}
+	else if (a == closeDoor)
+	{
+		attributes[feelsUnsecure] = false;
+		return false;
+	}
+	else if (a == gotoWater)
+	{
+		attributes[hasWater] = true;
+		return true;
+	}
+	else if (a == gotoFood)
+	{
+		attributes[hasFood] = true;
+		return true;
+	}
+	else if (a == gotoBed)
+	{
+		attributes[hasBed] = true;
+		return true;
+	}
+	else// if (a == suicide)
+	{
+		attributes[isThirsty] = false;
+		attributes[isHungry] = false;
+		attributes[isTired] = false;
+		attributes[feelsUnsecure] = false;
+		attributes[isAlive] = false;
+		return true;
+	}
+}
+
+ActionNode::ActionNode()
+	:action(static_cast<State::Action>(0)),
+	next(nullptr)
+{
+}
+
+ActionNode::ActionNode(State::Action a, int depth)
+{
+	action = a;
+
+	if (action < 0)
+		std::cout << "WHAT!?!?!?!!?\n";
+
+	if (depth <= 0)
+	{
+		next = nullptr;
+	}
+	else
+	{
+		next = new ActionNode[State::ACTION_SIZE]();
+		for (int i = 0; i < State::ACTION_SIZE; ++i)
+		{
+			//next[i] = ActionNode(static_cast<State::Action>(i), depth - 1);
+			next[i] = ActionNode(static_cast<State::Action>(i), depth - 1);
+		}
+	}
+}
+
+ActionNode::~ActionNode()
+{
+	//for (int i = 0; i < State::ACTION_SIZE; ++i)
+		delete[] next;
+}
+
+bool mapCompare(std::map<State::Attributes, bool>& a, std::map<State::Attributes, bool>& b)
+{
+	int count = 0;
+	for (int i = 0; i < State::ATTR_SIZE; ++i)
+	{
+		State::Attributes iCast = static_cast<State::Attributes>(i);
+		if (a.count(iCast) == 1 && b.count(iCast) == 1 && a[iCast] != b[iCast])
+		{
+			count++;
+			return false;
+		}
+	}
+
+	return (count > 0) ? true : false;
 }

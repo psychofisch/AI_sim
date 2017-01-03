@@ -7,6 +7,28 @@
 #include "QuadGrid.h"
 
 enum Stats { health = 0, thirst, hunger, fatique, safety, STATS_SIZE };
+//enum Actions { moveTo = 0, drink, eat, sleep, ActionsSIZE };
+
+class State {
+public:
+	enum Attributes { isAlive = 0, isThirsty, isHungry, isTired, feelsUnsecure, hasWater, hasFood, hasBed, ATTR_SIZE };
+	enum Action { drink = 0, eat, sleep, openDoor, closeDoor, suicide, gotoWater, gotoFood, gotoBed, ACTION_SIZE };
+
+	static bool doAction(Action a, std::map<Attributes, bool>& attributes);
+};
+
+class ActionNode {
+public:
+	State::Action action;
+	ActionNode* next;
+	
+	ActionNode();
+	ActionNode(State::Action a, int depth);
+	
+	~ActionNode();
+};
+
+bool mapCompare(std::map<State::Attributes, bool>& a, std::map<State::Attributes, bool>& b);
 
 class Agent : public gameobj
 {
@@ -34,10 +56,10 @@ protected:
 	QuadGrid* m_quadgrid;
 	bool m_alive;
 	std::vector<int> m_stats;
-	/*int	m_health,
-		m_thirst,
-		m_hunger,
-		m_fatique;*/
+	std::map<State::Attributes, bool> m_state;
+	std::vector<State::Action> m_todoList;
+
+	void i_think();
 };
 
 class Enemy : public Agent

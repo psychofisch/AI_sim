@@ -10,6 +10,7 @@ const sf::Vector2i quad_nb[4] = {
 class Terrain : public gameobj {
 public:
 	int terrainId;
+	bool isLocked;
 };
 
 enum Resource { Empty = 0, Water, Food, Sleep, Safety, RESOURCE_SIZE };

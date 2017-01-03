@@ -77,7 +77,7 @@ std::vector<Astar::Node> Astar::findPath(QuadGrid & grid, const sf::Vector2i sta
 
 		if (minIndex == -1)
 		{
-			std::cout << "CRITICAL ERROR IN A*!\n";
+			//std::cout << "CRITICAL ERROR IN A*!\n";
 			return std::vector<Node>();
 		}
 

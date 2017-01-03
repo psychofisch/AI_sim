@@ -203,6 +203,16 @@ sf::Vector2i FileIO::LoadLevel(const char * gridpath, const char* texpath, QuadG
 				resources.push_back(static_cast<Resource>(resId));
 			else
 				resources.push_back(Resource::Empty);
+
+			//actions
+			int actionId = lvl.getPixel(x, y).b / 10;
+			if (actionId == 1)
+			{
+				grid[x + y * size.y].isLocked = true;
+			}
+			else
+				grid[x + y * size.y].isLocked = false;
+
 		}
 	//***
 
