@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sstream>
+#include <queue>
 
 #include "gameobj.h"
 #include "Astar.h"
@@ -20,11 +21,12 @@ public:
 class ActionNode {
 public:
 	State::Action action;
+	ActionNode* parent;
 	std::vector<ActionNode> next;
 	bool todo;
 	
 	ActionNode();
-	ActionNode(State::Action a, int depth);
+	ActionNode(State::Action a, int depth, ActionNode* p);
 	
 	~ActionNode();
 };
@@ -40,6 +42,7 @@ public:
 
 	int getTarget() const;
 	bool isPlayer() const;
+	int getThinkAheadLimit() const;
 	void drawPath(sf::RenderWindow* wndw);
 	void drawStats(sf::RenderWindow* wndw, sf::Text& text);
 
@@ -47,10 +50,12 @@ public:
 	bool setTarget(int t);
 	void setGrid(QuadGrid* hg);
 	void isPlayer(bool p);
+	void setThinkAheadLimit(int l);
 	
 protected:
 	int m_targetTile;
 	int m_aliveTick;
+	int m_thinkAheadLimit;
 	bool m_player;
 	std::vector<Astar::Node> m_path;
 	int m_pathPos;
@@ -58,10 +63,12 @@ protected:
 	bool m_alive;
 	std::vector<int> m_stats;
 	std::map<State::Attributes, bool> m_state;
-	std::vector<State::Action> m_todoList;
+	//std::vector<State::Action> m_todoList;
+	std::queue<State::Action> m_todoList;
+	State::Action m_currentAction;
 
 	void i_think();
-	bool i_treeLook(ActionNode* an, std::map<State::Attributes, bool> targetState);
+	bool i_treeLook(ActionNode* an, std::map<State::Attributes, bool> tryStates,  std::map<State::Attributes, bool> targetState, std::vector<State::Action>& path);
 };
 
 class Enemy : public Agent
