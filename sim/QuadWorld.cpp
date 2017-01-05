@@ -57,6 +57,7 @@ void QuadWorld::run()
 			else if (eve.type == sf::Event::MouseButtonPressed && eve.mouseButton.button == sf::Mouse::Left)
 			{
 				m_player.setTarget(m_grid.getGridNumber(mousePos_mapped));
+				m_player.clearTodoList();
 				if (m_player.getTarget() == -1)
 					break;
 

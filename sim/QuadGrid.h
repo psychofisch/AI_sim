@@ -2,6 +2,8 @@
 #include "gameobj.h"
 #include "vector2math.h"
 
+class Astar;
+
 const sf::Vector2i quad_nb[4] = {
 	sf::Vector2i(0, -1), sf::Vector2i(1,  0),
 	sf::Vector2i(0, 1), sf::Vector2i(-1, 0)
@@ -45,6 +47,7 @@ public:
 	sf::Vector2f getRealCoords(sf::Vector2i p);	//TODO: make const
 	sf::Vector2f getRealCoords(int x, int y);	//TODO: make const
 	std::vector<int> findResource(Resource r);
+	int findClosestResource(sf::Vector2i pos, Resource r);
 
 	//statics
 	static int quadDistance(sf::Vector2i a, sf::Vector2i b);

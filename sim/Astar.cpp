@@ -13,6 +13,12 @@ std::vector<Astar::Node> Astar::findPath(QuadGrid & grid, const sf::Vector2i sta
 {
 	std::vector<Node> nodes;
 
+	if (start == end)
+	{
+		std::cout << "A*: start = end break\n";
+		return nodes;
+	}
+
 	Node currentNode = end;
 	nodes.push_back(currentNode);
 	do {

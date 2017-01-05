@@ -1,6 +1,6 @@
 #include "QuadGrid.h"
 
-
+#include "Astar.h"
 
 QuadGrid::QuadGrid()
 {
@@ -142,6 +142,29 @@ std::vector<int> QuadGrid::findResource(Resource r)
 	}
 
 	return result;
+}
+
+int QuadGrid::findClosestResource(sf::Vector2i pos, Resource r)
+{
+	std::vector<int> fields = findResource(r);
+	int minResInd = -1;
+	int minDist = INT_MAX;
+	for (int i = 0; i < fields.size(); ++i)
+	{
+		int tmpDist = Astar::findPath(*this, pos, getGridCoords(fields[i])).size();
+		if (tmpDist < minDist)
+		{
+			minResInd = i;
+			minDist = tmpDist;
+		}
+	}
+
+	if (minResInd != -1)
+	{
+		return fields[minResInd];
+	}
+	else
+		return -1;
 }
 
 int QuadGrid::quadDistance(sf::Vector2i a, sf::Vector2i b)

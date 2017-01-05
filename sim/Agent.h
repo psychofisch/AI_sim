@@ -51,6 +51,7 @@ public:
 	void setGrid(QuadGrid* hg);
 	void isPlayer(bool p);
 	void setThinkAheadLimit(int l);
+	void clearTodoList();
 	
 protected:
 	int m_targetTile;

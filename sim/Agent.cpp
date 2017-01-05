@@ -107,7 +107,7 @@ void Agent::update(float dt)
 		m_stats[i] = clamp(m_stats[i]);
 		if (m_stats[i] >= 100)
 		{
-			m_stats[0] -= 5;//if any stat is higher than 100 -> lower health
+			m_stats[Stats::health] -= 5;//if any stat is higher than 100 -> lower health
 			break;			//dont lower health faster when more than one stat is cirtical
 		}
 	}
@@ -118,18 +118,44 @@ void Agent::update(float dt)
 	{
 		m_state[State::isThirsty] = true;
 	}
+	else if (m_stats[Stats::thirst] == 0)
+	{
+		m_state[State::isThirsty] = false;
+	}
+
+	if (m_stats[Stats::hunger] > 50)
+	{
+		m_state[State::isHungry] = true;
+	}
+	else if (m_stats[Stats::hunger] == 0)
+	{
+		m_state[State::isHungry] = false;
+	}
 
 	if (currentResource == Resource::Water)
 	{
 		m_state[State::hasWater] = true;
 
-		if (m_currentAction == State::gotoWater)
+		if (m_currentAction == State::gotoWater || (m_currentAction == State::drink && m_state[State::isThirsty] == false))
 			m_currentAction = State::nothing;
+	}
+	else if (currentResource == Resource::Food)
+	{
+		m_state[State::hasFood] = true;
+
+		if (m_currentAction == State::gotoFood || (m_currentAction == State::eat && m_state[State::isHungry] == false))
+			m_currentAction = State::nothing;
+	}
+	else 
+	{
+		m_state[State::hasWater] = false;
+		m_state[State::hasFood] = false;
+		m_state[State::hasBed] = false;
 	}
 	//*** ss
 
 	//survival instinct
-	if(m_alive && m_aliveTick%1 == 0)
+	if(m_alive && m_aliveTick%5 == 0)
 		i_think();
 
 	if (!m_todoList.empty() && m_currentAction == State::nothing)
@@ -138,27 +164,21 @@ void Agent::update(float dt)
 		m_todoList.pop();
 		if (m_currentAction == State::gotoWater)
 		{
-			std::vector<int> fields = m_quadgrid->findResource(Resource::Water);
-			int minResInd = -1;
-			int minDist = INT_MAX;
-			for (int i = 0; i < fields.size(); ++i)
-			{
-				int tmpDist = Astar::findPath(*m_quadgrid, iPos, m_quadgrid->getGridCoords(fields[i])).size();
-				if (tmpDist < minDist)
-				{
-					minResInd = i;
-					minDist = tmpDist;
-				}
-			}
-
-			if (minResInd != -1)
-			{
-				setTarget(fields[minResInd]);
-			}
+			int waterSource = m_quadgrid->findClosestResource(iPos, Resource::Water);
+			if (waterSource != -1)
+				setTarget(waterSource);
 			else
 				std::cout << "no water source found! =(\n";
 		}
-		else if (m_currentAction == State::nothing || m_currentAction == State::drink)
+		else if (m_currentAction == State::gotoFood)
+		{
+			int foodSource = m_quadgrid->findClosestResource(iPos, Resource::Food);
+			if (foodSource != -1)
+				setTarget(foodSource);
+			else
+				std::cout << "no food source found! =(\n";
+		}
+		else if (m_currentAction == State::nothing || m_currentAction == State::drink || m_currentAction == State::eat)
 		{
 			//happens automagically
 		}
@@ -167,34 +187,6 @@ void Agent::update(float dt)
 			std::cout << "Action " << m_currentAction << " not implemented yet!\n";
 		}
 	}
-	/*
-	for (int s = 1; s < Stats::STATS_SIZE; ++s)
-	{
-		if (m_stats[s] > 50 && currentResource != s)
-		{
-			std::vector<int> fields = m_quadgrid->findResource(static_cast<Resource>(s));
-			int minResInd = -1;
-			int minDist = INT_MAX;
-			for (int i = 0; i < fields.size(); ++i)
-			{
-				int tmpDist = Astar::findPath(*m_quadgrid, iPos, m_quadgrid->getGridCoords(fields[i])).size();
-				if (tmpDist < minDist)
-				{
-					minResInd = i;
-					minDist = tmpDist;
-				}
-			}
-
-			if (minResInd != -1)
-			{
-				setTarget(fields[minResInd]);
-			}
-			else
-				std::cout << "no water source found! =(\n";
-			
-			break; //only do one thing at the time & stats are sorted by priority
-		}
-	}*/
 	//*** si
 
 	//Die
@@ -245,8 +237,15 @@ void Agent::setThinkAheadLimit(int lim)
 	m_thinkAheadLimit = lim;
 }
 
+void Agent::clearTodoList()
+{
+	m_todoList = std::queue<State::Action>();
+	m_currentAction = State::nothing;
+}
+
 void Agent::i_think()
 {
+	std::cout << "Current Action: " << m_currentAction << std::endl;
 	std::map<State::Attributes, bool> savedState(m_state);
 	std::map<State::Attributes, bool> targetState;
 
@@ -295,6 +294,7 @@ void Agent::i_think()
 
 	if (found)
 	{
+		m_todoList = std::queue<State::Action>();
 		std::reverse(actions.begin(), actions.end());
 		std::cout << "Actions to do: ";
 		for (int i = 0; i < actions.size(); ++i)
