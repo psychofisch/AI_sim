@@ -46,6 +46,12 @@ bool QuadGrid::insertTerrain(int id, int costs)
 	return m_terrains.insert_or_assign(id, costs).second;
 }
 
+void QuadGrid::lock(sf::Vector2i pos, Terrain::Activity a)
+{
+	if(m_grid[getGridNumber(pos)].activity == Terrain::Activity::closedDoor || m_grid[getGridNumber(pos)].activity == Terrain::Activity::openDoor)
+		m_grid[getGridNumber(pos)].activity = a;
+}
+
 void QuadGrid::initResources()
 {
 	m_resources.resize(m_grid.size(), Resource::Empty);
@@ -85,6 +91,11 @@ int QuadGrid::getGridNumber(sf::Vector2f pos) const
 	return result;
 }
 
+inline int QuadGrid::getGridNumber(sf::Vector2i pos) const
+{
+	return pos.x + pos.y * m_dimension.x;
+}
+
 sf::Vector2i QuadGrid::getGridCoords(sf::Vector2f pos) const
 {
 	return getGridCoords(getGridNumber(pos));
@@ -111,7 +122,7 @@ Resource QuadGrid::getResource(int index)
 
 Resource QuadGrid::getResource(sf::Vector2i pos)
 {
-	return getResource(pos.x + pos.y * m_dimension.y);
+	return getResource(getGridNumber(pos));
 }
 
 sf::Vector2f QuadGrid::getRealCoords(int p)
@@ -119,9 +130,9 @@ sf::Vector2f QuadGrid::getRealCoords(int p)
 	return m_grid[p].getPosition();
 }
 
-sf::Vector2f QuadGrid::getRealCoords(sf::Vector2i p)
+sf::Vector2f QuadGrid::getRealCoords(sf::Vector2i pos)
 {
-	return getRealCoords(p.x + p.y * m_dimension.x);
+	return getRealCoords(getGridNumber(pos));
 }
 
 sf::Vector2f QuadGrid::getRealCoords(int x, int y)
@@ -167,6 +178,14 @@ int QuadGrid::findClosestResource(sf::Vector2i pos, Resource r)
 		return -1;
 }
 
+bool QuadGrid::isLocked(sf::Vector2i pos)
+{
+	if (m_grid[getGridNumber(pos)].activity == Terrain::Activity::closedDoor)
+		return true;
+	else
+		return false;
+}
+
 int QuadGrid::quadDistance(sf::Vector2i a, sf::Vector2i b)
 {
 	return std::abs(a.x - b.x) + std::abs(a.y - b.y);
@@ -176,43 +195,3 @@ Terrain& QuadGrid::operator[](int i)
 {
 	return m_grid[i];
 }
-
-/*
-sf::Vector3i QuadGrid::hexToCube(sf::Vector2i hex)
-{
-	sf::Vector3i cube;
-	cube.x = hex.x;
-	cube.z = hex.y - (hex.x + (hex.x & 1)) / 2;
-	cube.y = -cube.x - cube.z;
-	return cube;
-}
-
-sf::Vector2i QuadGrid::cubeToHex(sf::Vector3i cube)
-{
-	sf::Vector2i hex;
-	hex.x = cube.x;
-	hex.y = cube.z + (cube.x + (cube.x & 1)) / 2;
-	return hex;
-}
-
-int QuadGrid::hexDistance(sf::Vector2i a, sf::Vector2i b)
-{
-	sf::Vector3i cubeA = hexToCube(a);
-	sf::Vector3i cubeB = hexToCube(b);
-	return (fabsf(cubeA.x - cubeB.x) + fabsf(cubeA.y - cubeB.y) + fabsf(cubeA.z - cubeB.z)) / 2.f;
-}
-
-
-sf::Vector2i QuadGrid::rotate(sf::Vector2i a, sf::Vector2i b, int t)
-{
-	sf::Vector3i cube = hexToCube(b - a);
-	for (int i = 0; i < t; ++i)
-	{
-		cube.x = -cube.z;
-		cube.y = -cube.x;
-		cube.z = -cube.y;
-	}
-	sf::Vector2i c = cubeToHex(cube);
-	return c;
-}
-*/

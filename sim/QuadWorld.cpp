@@ -65,7 +65,7 @@ void QuadWorld::run()
 				sf::Vector2i coordsPlayer = m_grid.getGridCoords(m_player.getPosition());
 				std::cout << "Target: " << coordsTarget.x << "|"  << coordsTarget.y <<
 						" - Player: " << coordsPlayer.x << "|" << coordsPlayer.y << " = " << QuadGrid::quadDistance(coordsTarget, coordsPlayer) << std::endl <<
-						"Resource: " << m_grid.getResource(coordsTarget.x + coordsTarget.y * m_grid.dimensions().y) << std::endl;
+						"Resource: " << m_grid.getResource(m_grid.getGridNumber(coordsTarget)) << std::endl;
 				//std::cout << mousePos_mapped.x << "," << mousePos_mapped.y << std::endl;
 				break;
 			}
@@ -159,6 +159,10 @@ void QuadWorld::run()
 
 		for (int i = 0; i < m_grid.size(); ++i)
 		{
+			if(m_grid[i].activity == Terrain::Activity::closedDoor)
+				m_grid[i].setFillColor(sf::Color::Red);
+			else if (m_grid[i].activity == Terrain::Activity::openDoor)
+				m_grid[i].setFillColor(sf::Color::Green);
 			m_window->draw(m_grid[i]);
 		}
 		m_player.drawPath(m_window);

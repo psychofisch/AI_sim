@@ -199,20 +199,31 @@ sf::Vector2i FileIO::LoadLevel(const char * gridpath, const char* texpath, QuadG
 
 			//fill resource
 			int resId = lvl.getPixel(x, y).g / 10;
-			if(resId < Resource::RESOURCE_SIZE)
+			if (resId < Resource::RESOURCE_SIZE)
+			{
 				resources.push_back(static_cast<Resource>(resId));
+				sf::Color c;
+				switch (static_cast<Resource>(resId))
+				{
+				case Resource::Food: c = sf::Color(116, 223, 0);
+					break;
+				case Resource::Water: c = sf::Color(22, 95, 255);
+					break;
+				case Resource::Sleep: c = sf::Color(100, 100, 100);
+					break;
+				case Resource::Safety: c = sf::Color(255, 97, 40);
+					break;
+				default: c = sf::Color::White;
+					break;
+				}
+				grid[x + y * size.y].setFillColor(c);
+			}
 			else
 				resources.push_back(Resource::Empty);
 
 			//actions
 			int actionId = lvl.getPixel(x, y).b / 10;
-			if (actionId == 1)
-			{
-				grid[x + y * size.y].isLocked = true;
-			}
-			else
-				grid[x + y * size.y].isLocked = false;
-
+			grid[x + y * size.y].activity = static_cast<Terrain::Activity>(actionId);
 		}
 	//***
 

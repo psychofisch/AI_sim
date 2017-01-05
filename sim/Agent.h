@@ -1,13 +1,14 @@
 #pragma once
 
 #include <sstream>
-#include <queue>
+//#include <queue>
+#include <deque>
 
 #include "gameobj.h"
 #include "Astar.h"
 #include "QuadGrid.h"
 
-enum Stats { health = 0, thirst, hunger, fatique, safety, STATS_SIZE };
+enum Stats { health = 0, thirst, hunger, fatique, danger, STATS_SIZE };
 //enum Actions { moveTo = 0, drink, eat, sleep, ActionsSIZE };
 
 class State {
@@ -62,14 +63,15 @@ protected:
 	int m_pathPos;
 	QuadGrid* m_quadgrid;
 	bool m_alive;
-	std::vector<int> m_stats;
+	std::map<Stats, int> m_stats;
 	std::map<State::Attributes, bool> m_state;
 	//std::vector<State::Action> m_todoList;
-	std::queue<State::Action> m_todoList;
+	std::deque<State::Action> m_todoList;
 	State::Action m_currentAction;
 
 	void i_think();
 	bool i_treeLook(ActionNode* an, std::map<State::Attributes, bool> tryStates,  std::map<State::Attributes, bool> targetState, std::vector<State::Action>& path);
+	bool i_setStat(Stats s, int limit);
 };
 
 class Enemy : public Agent

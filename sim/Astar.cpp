@@ -34,12 +34,14 @@ std::vector<Astar::Node> Astar::findPath(QuadGrid & grid, const sf::Vector2i sta
 			if (tmp < sf::Vector2i(0, 0) || tmp > grid.dimensions() - 1)
 				continue;
 
-			int terrain = grid.getTerrain(grid[tmp.x + tmp.y * grid.dimensions().y].terrainId);
+			int terrain = grid.getTerrain(grid[grid.getGridNumber(tmp)].terrainId);
 			if (terrain == 0)
 				continue;
 
 			tmp.todo = true;
 			tmp.costs = QuadGrid::quadDistance(start, tmp) + terrain;
+			if (grid.isLocked(tmp))
+				tmp.costs += 5;
 			tmp.prev = currentNode;
 
 			int prevCosts = 0;
