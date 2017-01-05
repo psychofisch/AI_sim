@@ -91,15 +91,20 @@ void Agent::update(float dt)
 	sf::Vector2i iPos = m_quadgrid->getGridCoords(getPosition());
 
 	//*** stats calc
-	if (m_aliveTick % 1 == 0)
+	if (m_aliveTick % 5 == 0)
 	{
-		m_stats[Stats::thirst] += 2;
-		m_stats[Stats::hunger] += 1;
+		m_stats[Stats::thirst] += 10;
+		m_stats[Stats::hunger] += 5;
+		m_stats[Stats::fatique] += 1;
 	}
 	
 	Resource currentResource = m_quadgrid->getResource(iPos);
 	if (currentResource > Resource::Empty && currentResource < Resource::RESOURCE_SIZE)
+	{
 		m_stats[currentResource] -= 10;
+		if (currentResource == Resource::Sleep)
+			m_stats[health] += 1;
+	}
 
 	m_stats[Stats::health] = clamp(m_stats[Stats::health]);
 	for (int i = 1; i < Stats::STATS_SIZE; ++i)//start at 1 because health is does not affect health
@@ -132,6 +137,15 @@ void Agent::update(float dt)
 		m_state[State::isHungry] = false;
 	}
 
+	if (m_stats[Stats::fatique] > 50)
+	{
+		m_state[State::isTired] = true;
+	}
+	else if (m_stats[Stats::fatique] == 0)
+	{
+		m_state[State::isTired] = false;
+	}
+
 	if (currentResource == Resource::Water)
 	{
 		m_state[State::hasWater] = true;
@@ -146,6 +160,13 @@ void Agent::update(float dt)
 		if (m_currentAction == State::gotoFood || (m_currentAction == State::eat && m_state[State::isHungry] == false))
 			m_currentAction = State::nothing;
 	}
+	else if (currentResource == Resource::Sleep)
+	{
+		m_state[State::hasBed] = true;
+
+		if (m_currentAction == State::gotoBed || (m_currentAction == State::sleep && m_state[State::isTired] == false))
+			m_currentAction = State::nothing;
+	}
 	else 
 	{
 		m_state[State::hasWater] = false;
@@ -155,7 +176,7 @@ void Agent::update(float dt)
 	//*** ss
 
 	//survival instinct
-	if(m_alive && m_aliveTick%5 == 0)
+	if(m_alive && m_aliveTick%2 == 0)
 		i_think();
 
 	if (!m_todoList.empty() && m_currentAction == State::nothing)
@@ -177,6 +198,14 @@ void Agent::update(float dt)
 				setTarget(foodSource);
 			else
 				std::cout << "no food source found! =(\n";
+		}
+		else if (m_currentAction == State::gotoBed)
+		{
+			int bed = m_quadgrid->findClosestResource(iPos, Resource::Sleep);
+			if (bed != -1)
+				setTarget(bed);
+			else
+				std::cout << "no bed found! =(\n";
 		}
 		else if (m_currentAction == State::nothing || m_currentAction == State::drink || m_currentAction == State::eat)
 		{
