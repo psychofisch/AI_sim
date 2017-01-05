@@ -158,7 +158,7 @@ std::vector<int> QuadGrid::findResource(Resource r)
 	{
 		if (m_resources[i] == r)
 		{
-			if (r == Resource::Safety)
+			/*if (r == Resource::Safety)
 			{
 				int count = 0;
 				for (int n = 0; n < 4; ++n)
@@ -173,9 +173,9 @@ std::vector<int> QuadGrid::findResource(Resource r)
 					result.push_back(i);
 			}
 			else
-			{
+			{*/
 				result.push_back(i);
-			}
+			//}
 		}
 	}
 

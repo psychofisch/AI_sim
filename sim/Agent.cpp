@@ -6,7 +6,7 @@ Agent::Agent()
 	m_player(false),
 	m_alive(true),
 	m_aliveTick(0),
-	m_thinkAheadLimit(5)
+	m_thinkAheadLimit(6)
 {
 	for (int i = 0; i < Stats::STATS_SIZE; ++i)
 	{
@@ -95,16 +95,16 @@ void Agent::update(float dt)
 	//*** stats calc
 	if (m_aliveTick % 5 == 0)
 	{
-		m_stats[Stats::thirst] += 7;
-		m_stats[Stats::hunger] += 5;
-		m_stats[Stats::fatique] += 1;
+		m_stats[Stats::thirst] += 4;
+		m_stats[Stats::hunger] += 3;
+		m_stats[Stats::fatique] += 2;
+		m_stats[Stats::danger] += 1;
 	}
 	
 	Resource currentResource = m_quadgrid->getResource(iPos);
 	if (currentResource > Resource::Empty && currentResource < Resource::RESOURCE_SIZE)
 	{
-		if(currentResource != Resource::Safety)
-			m_stats[static_cast<Stats>(currentResource)] -= 10; //DIRTY! works because Stats and Resource have the same size and order!
+		m_stats[static_cast<Stats>(currentResource)] -= 10; //DIRTY! works because Stats and Resource have the same size and order!
 		if (currentResource == Resource::Sleep)
 			m_stats[health] += 1;
 	}
@@ -114,9 +114,9 @@ void Agent::update(float dt)
 	{
 		Stats iStat = static_cast<Stats>(i);
 		m_stats[iStat] = clamp(m_stats[iStat]);
-		if (m_stats[iStat] >= 100)
+		if (m_stats[iStat] >= 100 && iStat != Stats::danger)
 		{
-			m_stats[Stats::health] -= 5;//if any stat is higher than 100 -> lower health
+			m_stats[Stats::health] -= 1;//if any stat is higher than 100 -> lower health
 			break;			//dont lower health faster when more than one stat is cirtical
 		}
 	}
@@ -126,7 +126,7 @@ void Agent::update(float dt)
 	m_state[State::isThirsty] = i_setStat(Stats::thirst, 50);
 	m_state[State::isHungry] = i_setStat(Stats::hunger, 50);
 	m_state[State::isTired] = i_setStat(Stats::fatique, 50);
-	m_state[State::feelsUnsecure] = i_setStat(Stats::danger, 50);
+	m_state[State::feelsUnsecure] = i_setStat(Stats::danger, 60);
 	//*** ss
 
 	//state reaction
@@ -175,16 +175,12 @@ void Agent::update(float dt)
 		if (m_quadgrid->isLocked(m_path[m_pathPos + 1]) == true)
 		{
 			std::cout << "damn! this door is locked...\n";
-			//m_todoList.push_front(m_currentAction);
-			m_todoList.push_front(State::openDoor);
-			m_currentAction = State::nothing;
+			//m_todoList.push_front(State::openDoor);
+			//m_currentAction = State::nothing;
 			m_quadgrid->lock(m_path[m_pathPos + 1], Terrain::Activity::openDoor);
 		}
 		else
 		{
-			if (m_currentAction == State::openDoor)
-				m_currentAction = State::nothing;
-
 			m_pathPos++;
 			int gridpos = m_quadgrid->getGridNumber(m_path[m_pathPos]);
 			float rot = angleD((*m_quadgrid)[gridpos].getPosition() - getPosition());
@@ -229,26 +225,9 @@ void Agent::update(float dt)
 			if (door != -1)
 				setTarget(door);
 			else
-				std::cout << "no bed found! =(\n";
+				std::cout << "no door found! =(\n";
 		}
-		else if (m_currentAction == State::openDoor)
-		{
-				m_stats[Stats::danger] += 10;
-		}
-		else if (m_currentAction == State::closeDoor)
-		{
-			for (int n = 0; n < 4; ++n)
-			{
-				sf::Vector2i tmpPos = iPos + quad_nb[n];
-				if (m_quadgrid->isDoor(tmpPos) && !m_quadgrid->isLocked(tmpPos))
-				{
-					m_quadgrid->lock(tmpPos, Terrain::Activity::closedDoor);
-					m_stats[Stats::danger] -= 10;
-				}
-			}
-			m_currentAction = State::nothing;
-		}
-		else if (m_currentAction == State::nothing || m_currentAction == State::drink || m_currentAction == State::eat || m_currentAction == State::sleep)
+		else if (m_currentAction == State::nothing || m_currentAction == State::drink || m_currentAction == State::eat || m_currentAction == State::sleep || m_currentAction == State::checkDoor)
 		{
 			//happens automagically
 		}
@@ -349,9 +328,6 @@ void Agent::i_think()
 
 	if (found)
 	{
-		bool openDoor = false;
-		if (!m_todoList.empty() && m_todoList.front() == State::openDoor)
-			openDoor = true;
 		m_todoList = std::deque<State::Action>();
 		//std::reverse(actions.begin(), actions.end());
 		std::cout << "Actions to do: ";
@@ -359,11 +335,6 @@ void Agent::i_think()
 		{
 			m_todoList.push_front(static_cast<State::Action>(actions[i]));
 			std::cout << actions[i] << ">";
-		}
-		if (openDoor)
-		{
-			m_todoList.push_front(State::openDoor);
-			std::cout << State::openDoor << ">";
 		}
 		std::cout << "!\n";
 	}
@@ -488,11 +459,7 @@ bool State::doAction(Action a, std::map<Attributes, bool>& attributes)
 		else
 			return false;
 	}
-	else if (a == openDoor)
-	{
-		attributes[feelsUnsecure] = true;
-	}
-	else if (a == closeDoor)
+	else if (a == checkDoor)
 	{
 		if (attributes[hasDoor] == true)
 		{
