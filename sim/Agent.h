@@ -1,7 +1,6 @@
 #pragma once
 
 #include <sstream>
-//#include <queue>
 #include <deque>
 
 #include "gameobj.h"
@@ -13,8 +12,8 @@ enum Stats { health = 0, thirst, hunger, fatique, danger, STATS_SIZE };
 
 class State {
 public:
-	enum Attributes { isAlive = 0, isThirsty, isHungry, isTired, feelsUnsecure, hasWater, hasFood, hasBed, ATTR_SIZE };
-	enum Action { nothing = 0, drink, eat, sleep, openDoor, closeDoor, suicide, gotoWater, gotoFood, gotoBed, ACTION_SIZE };
+	enum Attributes { isAlive = 0, isThirsty, isHungry, isTired, feelsUnsecure, hasWater, hasFood, hasBed, hasDoor, ATTR_SIZE };
+	enum Action { nothing = 0, drink, eat, sleep, openDoor, closeDoor, suicide, gotoWater, gotoFood, gotoBed, gotoDoor, ACTION_SIZE };
 
 	static bool doAction(Action a, std::map<Attributes, bool>& attributes);
 };

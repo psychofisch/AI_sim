@@ -46,10 +46,20 @@ bool QuadGrid::insertTerrain(int id, int costs)
 	return m_terrains.insert_or_assign(id, costs).second;
 }
 
+bool QuadGrid::isDoor(sf::Vector2i pos)
+{
+	if (m_grid[getGridNumber(pos)].activity == Terrain::Activity::closedDoor || m_grid[getGridNumber(pos)].activity == Terrain::Activity::openDoor)
+		return true;
+	else
+		return false;
+}
+
 void QuadGrid::lock(sf::Vector2i pos, Terrain::Activity a)
 {
-	if(m_grid[getGridNumber(pos)].activity == Terrain::Activity::closedDoor || m_grid[getGridNumber(pos)].activity == Terrain::Activity::openDoor)
+	if (m_grid[getGridNumber(pos)].activity == Terrain::Activity::closedDoor || m_grid[getGridNumber(pos)].activity == Terrain::Activity::openDoor)
+	{
 		m_grid[getGridNumber(pos)].activity = a;
+	}
 }
 
 void QuadGrid::initResources()
@@ -148,7 +158,24 @@ std::vector<int> QuadGrid::findResource(Resource r)
 	{
 		if (m_resources[i] == r)
 		{
-			result.push_back(i);
+			if (r == Resource::Safety)
+			{
+				int count = 0;
+				for (int n = 0; n < 4; ++n)
+				{
+					sf::Vector2i tmpPos = getGridCoords(i) + quad_nb[n];
+					if (isDoor(tmpPos) && !isLocked(tmpPos))
+					{
+						count++;
+					}
+				}
+				if(count > 0)
+					result.push_back(i);
+			}
+			else
+			{
+				result.push_back(i);
+			}
 		}
 	}
 

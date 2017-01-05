@@ -103,7 +103,8 @@ void Agent::update(float dt)
 	Resource currentResource = m_quadgrid->getResource(iPos);
 	if (currentResource > Resource::Empty && currentResource < Resource::RESOURCE_SIZE)
 	{
-		m_stats[static_cast<Stats>(currentResource)] -= 10; //DIRTY! works because Stats and Resource have the same size and order!
+		if(currentResource != Resource::Safety)
+			m_stats[static_cast<Stats>(currentResource)] -= 10; //DIRTY! works because Stats and Resource have the same size and order!
 		if (currentResource == Resource::Sleep)
 			m_stats[health] += 1;
 	}
@@ -125,6 +126,7 @@ void Agent::update(float dt)
 	m_state[State::isThirsty] = i_setStat(Stats::thirst, 50);
 	m_state[State::isHungry] = i_setStat(Stats::hunger, 50);
 	m_state[State::isTired] = i_setStat(Stats::fatique, 50);
+	m_state[State::feelsUnsecure] = i_setStat(Stats::danger, 50);
 	//*** ss
 
 	//state reaction
@@ -155,63 +157,14 @@ void Agent::update(float dt)
 		m_state[State::hasFood] = false;
 		m_state[State::hasBed] = false;
 	}
+
+	if (m_currentAction == State::gotoDoor && m_quadgrid->getGridNumber(iPos) == m_targetTile)
+		m_currentAction = State::nothing;
 	//*** sr
 
 	//survival instinct
-	if(m_alive && m_aliveTick%2 == 0)
+	if(m_alive && m_aliveTick%1 == 0)
 		i_think();
-
-	if (!m_todoList.empty() && m_currentAction == State::nothing)
-	{
-		m_currentAction = m_todoList.front();
-		m_todoList.pop_front();
-		if (m_currentAction == State::gotoWater)
-		{
-			int waterSource = m_quadgrid->findClosestResource(iPos, Resource::Water);
-			if (waterSource != -1)
-				setTarget(waterSource);
-			else
-				std::cout << "no water source found! =(\n";
-		}
-		else if (m_currentAction == State::gotoFood)
-		{
-			int foodSource = m_quadgrid->findClosestResource(iPos, Resource::Food);
-			if (foodSource != -1)
-				setTarget(foodSource);
-			else
-				std::cout << "no food source found! =(\n";
-		}
-		else if (m_currentAction == State::gotoBed)
-		{
-			int bed = m_quadgrid->findClosestResource(iPos, Resource::Sleep);
-			if (bed != -1)
-				setTarget(bed);
-			else
-				std::cout << "no bed found! =(\n";
-		}
-		else if (m_currentAction == State::openDoor)
-		{
-			m_stats[Stats::danger] += 10;
-		}
-		else if (m_currentAction == State::closeDoor)
-		{
-			m_stats[Stats::danger] -= 10;
-		}
-		else if (m_currentAction == State::nothing || m_currentAction == State::drink || m_currentAction == State::eat)
-		{
-			//happens automagically
-		}
-		else
-		{
-			std::cout << "Action " << m_currentAction << " not implemented yet!\n";
-		}
-	}
-	//*** si
-
-	//Die
-	if (m_stats[Stats::health] <= 0)
-		m_alive = false;
-	//*** d
 
 	//Moving
 	if (m_targetTile != -1 && getPosition() != (*m_quadgrid)[m_targetTile].getPosition())
@@ -241,6 +194,75 @@ void Agent::update(float dt)
 		}
 	}
 	//*** m
+
+	if (!m_todoList.empty() && m_currentAction == State::nothing)
+	{
+		m_currentAction = m_todoList.front();
+		m_todoList.pop_front();
+		if (m_currentAction == State::gotoWater)
+		{
+			int waterSource = m_quadgrid->findClosestResource(iPos, Resource::Water);
+			if (waterSource != -1)
+				setTarget(waterSource);
+			else
+				std::cout << "no water source found! =(\n";
+		}
+		else if (m_currentAction == State::gotoFood)
+		{
+			int foodSource = m_quadgrid->findClosestResource(iPos, Resource::Food);
+			if (foodSource != -1)
+				setTarget(foodSource);
+			else
+				std::cout << "no food source found! =(\n";
+		}
+		else if (m_currentAction == State::gotoBed)
+		{
+			int bed = m_quadgrid->findClosestResource(iPos, Resource::Sleep);
+			if (bed != -1)
+				setTarget(bed);
+			else
+				std::cout << "no bed found! =(\n";
+		}
+		else if (m_currentAction == State::gotoDoor)
+		{
+			int door = m_quadgrid->findClosestResource(iPos, Resource::Safety);
+			if (door != -1)
+				setTarget(door);
+			else
+				std::cout << "no bed found! =(\n";
+		}
+		else if (m_currentAction == State::openDoor)
+		{
+				m_stats[Stats::danger] += 10;
+		}
+		else if (m_currentAction == State::closeDoor)
+		{
+			for (int n = 0; n < 4; ++n)
+			{
+				sf::Vector2i tmpPos = iPos + quad_nb[n];
+				if (m_quadgrid->isDoor(tmpPos) && !m_quadgrid->isLocked(tmpPos))
+				{
+					m_quadgrid->lock(tmpPos, Terrain::Activity::closedDoor);
+					m_stats[Stats::danger] -= 10;
+				}
+			}
+			m_currentAction = State::nothing;
+		}
+		else if (m_currentAction == State::nothing || m_currentAction == State::drink || m_currentAction == State::eat || m_currentAction == State::sleep)
+		{
+			//happens automagically
+		}
+		else
+		{
+			std::cout << "Action " << m_currentAction << " not implemented yet!\n";
+		}
+	}
+	//*** si
+
+	//Die
+	if (m_stats[Stats::health] <= 0)
+		m_alive = false;
+	//*** d
 }
 
 bool Agent::setTarget(int t)
@@ -327,6 +349,9 @@ void Agent::i_think()
 
 	if (found)
 	{
+		bool openDoor = false;
+		if (!m_todoList.empty() && m_todoList.front() == State::openDoor)
+			openDoor = true;
 		m_todoList = std::deque<State::Action>();
 		//std::reverse(actions.begin(), actions.end());
 		std::cout << "Actions to do: ";
@@ -334,6 +359,11 @@ void Agent::i_think()
 		{
 			m_todoList.push_front(static_cast<State::Action>(actions[i]));
 			std::cout << actions[i] << ">";
+		}
+		if (openDoor)
+		{
+			m_todoList.push_front(State::openDoor);
+			std::cout << State::openDoor << ">";
 		}
 		std::cout << "!\n";
 	}
@@ -464,7 +494,12 @@ bool State::doAction(Action a, std::map<Attributes, bool>& attributes)
 	}
 	else if (a == closeDoor)
 	{
-		attributes[feelsUnsecure] = false;
+		if (attributes[hasDoor] == true)
+		{
+			attributes[feelsUnsecure] = false;
+		}
+		else
+			return false;
 	}
 	else if (a == gotoWater)
 	{
@@ -477,6 +512,10 @@ bool State::doAction(Action a, std::map<Attributes, bool>& attributes)
 	else if (a == gotoBed)
 	{
 		attributes[hasBed] = true;
+	}
+	else if (a == gotoDoor)
+	{
+		attributes[hasDoor] = true;
 	}
 	else if (a == suicide)
 	{

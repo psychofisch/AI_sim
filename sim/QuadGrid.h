@@ -29,6 +29,7 @@ public:
 	void dimensions(const sf::Vector2i& d);
 	void initResources();
 	bool insertTerrain(int id, int costs);//return true = insertion | false = assign
+	bool isDoor(sf::Vector2i pos);
 	void lock(sf::Vector2i pos, Terrain::Activity a);
 
 	//mimic vector behaviour
